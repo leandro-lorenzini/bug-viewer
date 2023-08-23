@@ -92,6 +92,20 @@ const parser = new mongoose.Schema(
   { timestamps: true }
 );
 
+const stats = new mongoose.Schema({
+  repository: { type: String, required: true },
+  providers: [
+    { name: { type: String } },
+    { critical: { type: Number } },
+    { high: { type: Number } },
+    { medium: { type: Number } },
+    { low: { type: Number } },
+    { negligible: { type: Number } },
+  ]
+  }, 
+  { timestamps: true }
+);
+
 module.exports = {
   branch: mongoose.model("Branch", branch),
   findings: mongoose.model("Findings", finding),
@@ -99,4 +113,5 @@ module.exports = {
   settings: mongoose.model("Settings", settings),
   token: mongoose.model("Token", token),
   parser: mongoose.model("Parser", parser),
+  stats: mongoose.model("Stats", stats),
 };
