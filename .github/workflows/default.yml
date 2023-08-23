@@ -1,0 +1,31 @@
+---
+name: Security
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main] #Replace with your protected branch name
+  schedule:
+    - cron: '0 0 * * MON'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Run scanner
+        env:
+          BRANCH: main                            # Replace with your protected branch name
+          SERVER: ${{ secrets.BUGVIEWER_SERVER }} # Your server address
+          TOKEN:  ${{ secrets.BUGVIEWER_TOKEN }}  # Token is created using BugViewer's web interface
+          REPOSITORY: ${{ github.repository }}
+          REF: ${{ github.ref }}
+          FULL_CHECK: ${{github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
+        run: |
+          wget https://github.com/leandro-lorenzini/bug-viewer/archive/refs/tags/latest.tar.gz
+          tar -xf latest.tar.gz
+          mv bug-viewer-latest/scanner . && rm -rf bug-viewer-latest latest.tar.gz
+          cd scanner && sh scanner.sh

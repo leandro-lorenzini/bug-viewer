@@ -1,0 +1,140 @@
+[
+  {
+    "fields": {
+      "title": "message",
+      "ruleId": "ruleId",
+      "severity": "severity",
+      "file": "filePath",
+      "line": "line"
+    },
+    "severities": {
+      "high": "2",
+      "medium": "1",
+      "low": "0"
+    },
+    "name": "eslint",
+    "unwind": "messages"
+  },
+  {
+    "fields": {
+      "ruleId": "test_name",
+      "title": "issue_text",
+      "severity": "issue_severity",
+      "file": "filename",
+      "line": "line_number"
+    },
+    "severities": {
+      "critical": "CRITICAL",
+      "high": "HIGH",
+      "medium": "MEDIUM",
+      "low": "LOW"
+    },
+    "name": "bandit",
+    "rootPath": "results"
+  },
+  {
+    "fields": {
+      "ruleId": "rule_id",
+      "url": "cwe.url",
+      "title": "details",
+      "severity": "severity",
+      "file": "file",
+      "line": "line"
+    },
+    "severities": {
+      "critical": "CRITICAL",
+      "high": "HIGH",
+      "medium": "MEDIUM",
+      "low": "LOW"
+    },
+    "name": "gosec",
+    "rootPath": "Issues"
+  },
+  {
+    "fields": {
+      "ruleId": "long_id",
+      "url": "links",
+      "title": "rule_description",
+      "message": "description",
+      "impact": "impact",
+      "resource": "resource",
+      "severity": "severity",
+      "file": "location.filename",
+      "line": "line",
+      "resolution": "resolution"
+    },
+    "severities": {
+      "critical": "CRITICAL",
+      "high": "HIGH",
+      "medium": "MEDIUM",
+      "low": "LOW"
+    },
+    "name": "tfsec",
+    "rootPath": "results"
+  },
+  {
+    "fields": {
+      "ruleId": "check_id",
+      "url": "guideline",
+      "title": "check_name",
+      "severity": "\"HIGH\"",
+      "file": "file_path",
+      "line": "file_line_range"
+    },
+    "name": "checkov",
+    "rootPath": "results.failed_checks"
+  },
+  {
+    "fields": {
+      "title": "\"Sensitive data exposed\"",
+      "ruleId": "RuleID",
+      "severity": "\"CRITICAL\"",
+      "file": "File",
+      "line": "StartLine",
+      "resolution": "\"Invalidate any password/secret and update the projects gitleaks-baseline.json\""
+    },
+    "name": "gitleaks"
+  },
+  {
+    "fields": {
+      "title": "\"Docker image vulnerability\"",
+      "url": "vulnerability.dataSource",
+      "severity": "vulnerability.severity",
+      "file": "/source.target.userInput",
+      "package": "matchDetails.0.searchedBy.package.name",
+      "version": "matchDetails.0.searchedBy.package.version",
+      "cve": "vulnerability.id"
+    },
+    "severities": {
+      "critical": "Critical",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "negligible": "Negligible"
+    },
+    "name": "grype",
+    "rootPath": "matches"
+  },
+  {
+    "fields": {
+      "ruleId": "check_id",
+      "url": "extra.metadata.references",
+      "title": "extra.metadata.vulnerability_class.0",
+      "message": "extra.message",
+      "severity": "extra.metadata.impact",
+      "file": "path",
+      "line": "start.line",
+      "resolution": "extra.fix",
+      "cve": "extra.metadata.cwe.0"
+    },
+    "severities": {
+      "critical": "CRITICAL",
+      "high": "HIGH",
+      "medium": "MEDIUM",
+      "low": "LOW",
+      "negligible": "NEGLIGIBLE"
+    },
+    "name": "semgrep",
+    "rootPath": "results"
+  }
+]

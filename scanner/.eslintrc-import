@@ -1,0 +1,39 @@
+{
+  "ignorePatterns": ["parser.js"],
+  "plugins": ["sonarjs", "xss", "no-unsanitized"],
+  "extends": [
+    "plugin:security/recommended",
+    "plugin:sonarjs/recommended",
+    "plugin:xss/recommended",
+    "plugin:no-unsanitized/DOM"
+  ],
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+   "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "sonarjs/no-duplicate-string": "warn",
+    "sonarjs/cognitive-complexity": "warn",
+    "sonarjs/max-switch-cases": "warn",
+    "sonarjs/no-collapsible-if": "warn",
+    "sonarjs/no-duplicated-branches": "warn",
+    "sonarjs/no-gratuitous-expressions": "warn",
+    "sonarjs/no-identical-functions": "warn",
+    "sonarjs/no-nested-switch": "warn",
+    "sonarjs/no-nested-template-literals": "warn",
+    "sonarjs/no-redundant-boolean": "warn",
+    "sonarjs/no-small-switch": "warn",
+    "sonarjs/no-unused-collection": "warn",
+    "sonarjs/no-useless-catch": "warn",
+    "sonarjs/prefer-object-literal": "warn",
+    "sonarjs/prefer-immediate-return": "warn",
+    "sonarjs/prefer-single-boolean-return": "warn"
+  }
+}

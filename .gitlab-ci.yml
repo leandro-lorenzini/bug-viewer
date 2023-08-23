@@ -1,0 +1,35 @@
+default:
+  image: docker:20-git
+
+stages:
+  - scan
+
+scan_job:
+  stage: scan
+  script:
+    - apk update
+    - apk add curl
+    - apk add --update nodejs npm
+
+    - apk add wget curl
+    - wget https://github.com/leandro-lorenzini/bug-viewer/archive/refs/tags/latest.tar.gz
+    - tar -xf latest.tar.gz
+    - mv bug-viewer-latest/scanner . && rm -rf bug-viewer-latest latest.tar.gz
+    - cd scanner && sh scanner.sh
+  artifacts:
+    paths:
+      - scanner/tmp/result/*
+
+variables:
+  BRANCH: main # Replace with your protected branch name
+  SERVER: $BUGVIEWER_SERVER # Your server address, set this in the CI/CD environment variables
+  TOKEN: $BUGVIEWER_TOKEN # Token is created using BugViewer's web interface, set this in the CI/CD environment variables
+  REPOSITORY: $CI_PROJECT_URL
+  REF: $CI_COMMIT_REF_NAME
+  FULL_CHECK: "false" # Set this variable to true when scheduling the periodic scan
+
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:20-dind

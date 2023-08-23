@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "axios": "^1.4.0",
+    "connect-mongo": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "joi": "^17.9.2",
+    "mongoose": "^7.4.2",
+    "multer": "^1.4.5-lts.1",
+    "passport": "^0.6.0",
+    "passport-saml": "^3.2.4",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^8.47.0",
+    "eslint-plugin-no-secrets": "^0.8.9",
+    "eslint-plugin-no-unsanitized": "^4.0.2",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.33.1",
+    "eslint-plugin-security": "^1.7.1",
+    "eslint-plugin-sonarjs": "^0.20.0",
+    "eslint-plugin-xss": "^0.1.12"
+  }
+}

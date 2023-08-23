@@ -1,0 +1,31 @@
+version: "3"
+services:
+  api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    environment:
+      - SESSION_SECRET=123
+    depends_on:
+      - mongo
+
+  nginx:
+    build:
+      context: .
+    ports:
+      - "443:443"
+      - "80:80"
+    environment:
+      - SERVER_NAME=localhost
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./certificate.crt:/etc/nginx/ssl/certificate.crt
+      - ./certificate.key:/etc/nginx/ssl/certificate.key
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
