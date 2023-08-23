@@ -444,13 +444,13 @@ function Findings() {
                                 ),
                                 children: selectedFinding.url?.length ? (
                                   selectedFinding.url.map(url => {
-                                    return <a
+                                    return <div style={{ display: 'block' }}><a
                                       href={url}
                                       rel="noreferrer"
                                       target="_blank"
                                     >
                                       {url}
-                                    </a>
+                                    </a></div>
                                   })
                                 ) : null,
                                 span: 3,
