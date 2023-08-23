@@ -36,6 +36,8 @@ else
     export MODIFIED_FILES=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH))
 fi
 
+sh ./scanner/semgrep.sh
+
 # DOCKER IMAGE SCANNING
 if [ "$docker" = "true" ]; then
     sh ./scanner/docker.sh
@@ -96,8 +98,6 @@ if ! ls "$directory"*__gitleaks__* 1> /dev/null 2>&1; then
     echo "No files containing '__gitleaks__' found in the results directory."
     exit 1
 fi
-
-sh ./scanner/semgrep.sh
 
 # SUBMIT THE RESULT TO THE BUG-VIEWER SERVER
 sh ./scanner/submit.sh
