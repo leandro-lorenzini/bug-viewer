@@ -1,0 +1,21 @@
+[
+ {
+  "Description": "Private Key",
+  "StartLine": 40738,
+  "EndLine": 104737,
+  "StartColumn": 20,
+  "EndColumn": 37,
+  "Match": "-----BEGIN PGP PRIVATE KEY BLOCK-----'\n",
+  "File": "scanner/semgrep.yml",
+  "SymlinkFile": "",
+  "Commit": "83f316c20774eb4937f88188dbdac786251c7c89",
+  "Entropy": 4.9497666,
+  "Author": "Leandro Lorenzini",
+  "Email": "leandro.lorenzini@outlook.com",
+  "Date": "2023-08-24T03:17:06Z",
+  "Message": "Added default semgrep config file",
+  "Tags": [],
+  "RuleID": "private-key",
+  "Fingerprint": "83f316c20774eb4937f88188dbdac786251c7c89:scanner/semgrep.yml:private-key:40738"
+ }
+]
