@@ -104,7 +104,7 @@ function repositories(name, skip) {
 function branches(repository, ref, skip) {
   return new Promise((resolve, reject) => {
 
-    var filter = !ref ? 
+    var filter = !ref.length ? 
       { repository } : 
       {
         repository,
