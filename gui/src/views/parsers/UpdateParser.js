@@ -43,7 +43,7 @@ function UpdateParser(props) {
             <Form.Item name={['fields', 'title']} label="Title" initialValue={props.parser.fields.title}>
               <Input placeholder="Title" defaultValue={props.parser.fields.title} />
             </Form.Item>
-            <Form.Item name={['fields', 'message']} label="Message" message={props.parser.fields.message}>
+            <Form.Item name={['fields', 'message']} label="Message" initialValue={props.parser.fields.message}>
               <Input placeholder="Message" defaultValue={props.parser.fields.message} />
             </Form.Item>
             <Form.Item name={['fields', 'ruleId']} label="Rule ID" initialValue={props.parser.fields.ruleId}>
