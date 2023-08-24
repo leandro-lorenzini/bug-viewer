@@ -7,10 +7,12 @@ import {
   Table,
   Space,
   Button,
+  Tooltip
 } from "antd";
 import {
   BranchesOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
+  InfoCircleOutlined
 } from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
@@ -24,12 +26,14 @@ function Repositories() {
   const [total, setTotal] = useState({});
   const [name, setName] = useState(null);
 
+  const [parsers, setParsers] = useState([]);
   const [providers, setProviders] = useState([]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     getResults(name, 1);
+    getParsers();
   }, [name]);
 
   function getResults(name, page) {
@@ -60,6 +64,15 @@ function Repositories() {
         setLoading(false);
       });
   }
+
+  function getParsers() {
+    axios
+      .get("/api/parser?page=1", { withCredentials: true })
+      .then((response) => {
+        setParsers(response.data.results.data);
+      })
+  }
+
   const getSeverity = (severity, number) => {
     
     const levels = {
@@ -134,7 +147,13 @@ function Repositories() {
           {
             title: 'Findings on main branch',
             children: providers.map(provider => { return { 
-              title: provider,
+              title: parsers?.filter(parser =>  parser.name === provider)
+                .map(p => <Tooltip title={p.description}>
+                  <span>
+                    {provider}
+                    <InfoCircleOutlined style={{ marginLeft: 5 }} />
+                  </span>
+                </Tooltip>) || provider,
               render: (_, record) => {
                 return <>
                   { record.providers?.filter(p => p.name === provider)[0] ? <>

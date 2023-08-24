@@ -2,6 +2,7 @@ const express = require("express");
 const Joi = require("joi");
 const parserController = require("../controllers/parser.controller");
 const admin = require("../helper/admin.helper");
+const authenticated = require("../helper/authenticated.helper");
 
 const Router = express.Router();
 
@@ -35,6 +36,7 @@ Router.patch("/:parserId", admin, (req, res) => {
 
 const parserSchema = Joi.object({
   name: Joi.string().required(),
+  description: Joi.string().allow(''),
   rootPath: Joi.string().allow(''),
   unwind: Joi.string().allow(''),
   fields: Joi.object({
@@ -61,7 +63,7 @@ const parserSchema = Joi.object({
   })
 });
 
-Router.get("/", admin, (req, res) => {
+Router.get("/", authenticated,  (req, res) => {
   const { error, value } = Joi.object({
     name: Joi.string().allow(''),
     page: Joi.number().allow(''),

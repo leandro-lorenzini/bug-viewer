@@ -119,10 +119,13 @@ function Parser() {
         />
         <Table pagination={false} dataSource={repositories} columns={[
           {
-            title: 'Parser name', dataIndex: 'name', key: 'name', width: '50%'
+            title: 'Parser name', dataIndex: 'name', key: 'name', width: '20%'
           },
           {
-            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%'
+            title: 'Description', dataIndex: 'description', key: 'description', width: '55%'
+          },
+          {
+            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '15%'
           },
           {
             title: 'Actions', key: 'Actions', render: (_, record) => (

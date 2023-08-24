@@ -62,6 +62,7 @@ const token = new mongoose.Schema(
 const parser = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
     rootPath: { type: String },
     unwind: { type: String },
     fields: {

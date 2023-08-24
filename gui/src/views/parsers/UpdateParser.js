@@ -29,6 +29,9 @@ function UpdateParser(props) {
             <Form.Item name="name" required label="Parser name" initialValue={props.parser.name}>
               <Input placeholder="Parser name" defaultValue={props.parser.name} />
             </Form.Item>
+            <Form.Item name="description" required label="Parser description" initialValue={props.parser.description}>
+              <Input placeholder="Parser description" defaultValue={props.parser.description} />
+            </Form.Item>
             <Form.Item name="rootPath" label="JSON Root path" initialValue={props.parser.rootPath}>
               <Input placeholder="JSON Root path" defaultValue={props.parser.rootPath} />
             </Form.Item>

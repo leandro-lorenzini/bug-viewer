@@ -29,6 +29,9 @@ function AddParser(props) {
             <Form.Item name="name" required label="Parser name">
               <Input placeholder="Parser name" />
             </Form.Item>
+            <Form.Item name="description" label="Parser description">
+              <Input placeholder="Parser description" />
+            </Form.Item>
             <Form.Item name="rootPath" label="JSON Root path">
               <Input placeholder="JSON Root path" />
             </Form.Item>

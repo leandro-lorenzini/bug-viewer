@@ -13,6 +13,7 @@
       "low": "0"
     },
     "name": "eslint",
+    "description": "Javascript/Typescript with security plugins",
     "unwind": "messages"
   },
   {
@@ -30,6 +31,7 @@
       "low": "LOW"
     },
     "name": "bandit",
+    "description": "Python vulnerability and code smell scanner",
     "rootPath": "results"
   },
   {
@@ -48,6 +50,7 @@
       "low": "LOW"
     },
     "name": "gosec",
+    "description": "Golang vulnerability and code smell scanner",
     "rootPath": "Issues"
   },
   {
@@ -69,6 +72,7 @@
       "medium": "MEDIUM",
       "low": "LOW"
     },
+    "description": "Terraform vulnerability scanner",
     "name": "tfsec",
     "rootPath": "results"
   },
@@ -82,6 +86,7 @@
       "line": "file_line_range"
     },
     "name": "checkov",
+    "description": "Kubernetes vulnerability scanner",
     "rootPath": "results.failed_checks"
   },
   {
@@ -93,6 +98,7 @@
       "line": "StartLine",
       "resolution": "\"Invalidate any password/secret and update the projects gitleaks-baseline.json\""
     },
+    "description": "Git respository hardcoded secrets scanner",
     "name": "gitleaks"
   },
   {
@@ -113,6 +119,7 @@
       "negligible": "Negligible"
     },
     "name": "grype",
+    "description": "Docker image vulnerability scanner",
     "rootPath": "matches"
   },
   {
@@ -133,6 +140,7 @@
       "low": "INFO"
     },
     "name": "semgrep",
+    "description": "Multiple languages vulnerability scanner",
     "rootPath": "results"
   }
 ]
