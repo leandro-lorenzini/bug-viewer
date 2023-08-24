@@ -114,7 +114,7 @@ function repositories(name, skip) {
 
 function branches(repository, ref, skip) {
   return new Promise((resolve, reject) => {
-
+    
     var filter = !ref ?
       { repository } :
       {
@@ -125,19 +125,7 @@ function branches(repository, ref, skip) {
         }
       };
 
-    var pipeline = [];
-
-    if (ref) {
-      pipeline.push({
-        $match: {
-          ref: {
-            $regex: ref,
-            $options: "i",
-          }
-        }
-      });
-    }
-
+    var pipeline = [{ $match: filter }];
     pipeline.push(
       {
         $lookup: {
