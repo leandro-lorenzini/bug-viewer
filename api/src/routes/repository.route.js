@@ -193,16 +193,35 @@ Router.get("/branch", authenticated, (req, res) => {
       value.page ? (value.page - 1) * 20 : 0
     )
     .then((result) => {
-      res.json({
-        results: {
-          data: result.branches,
-          total: result.total,
-        },
-        page: {
-          current: value.page || 1,
-          all: Math.ceil(result.total / 20),
-        },
+      // Get stats
+      let promises = result.branches.map(b => {
+        return controller.mainBranch(b.repository, b._id);
+      })
+
+      Promise.all(promises).then(values => {
+        let promises = result.branches.map((b, index) => {
+          return {_id: b._id, ref: b.ref, providers: values[index].providers};
+        });
+
+        Promise.all(promises).then(values => {
+          console.log(values)
+          res.json({
+            results: {
+              data: values,
+              total: result.total,
+            },
+            page: {
+              current: value.page || 1,
+              all: Math.ceil(result.total / 20),
+            },
+          });
+        });
+
+      }).catch(error => {
+        console.log(error);
+        res.status(500).send();
       });
+
     })
     .catch((error) => {
       console.log(error);

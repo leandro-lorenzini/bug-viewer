@@ -2,50 +2,45 @@ const models = require("./models");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-function mainBranch(repository) {
+function mainBranch (repository, branchId) {
   return new Promise((resolve, reject) => {
+    
+    const match = !branchId ? {
+      repository,
+      $or: [
+        { ref: { $regex: 'main' } },
+        { ref: { $regex: 'master' } },
+      ]
+    } : {
+      _id: new ObjectId(branchId)
+    }
+
     const pipeline = [
-      {
-        $match: {
-          repository,
-          $or: [
-            { ref: { $regex: 'main' } },
-            { ref: { $regex: 'master' } },
-          ]
-        }
-      },
-      {
-        $lookup: {
-          from: 'findings',
-          localField: '_id',
-          foreignField: 'branchId',
-          as: 'findingsData'
-        }
-      },
-      { $unwind: { path: '$findingsData', preserveNullAndEmptyArrays: true } },
-      {
-        $group: {
-          _id: { repository: '$repository', provider: '$findingsData.provider' },
-          high: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'HIGH'] }, 1, 0] } },
-          medium: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'MEDIUM'] }, 1, 0] } },
-          low: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'LOW'] }, 1, 0] } },
-          critical: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'CRITICAL'] }, 1, 0] } },
-          negligible: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'NEGLIGIBLE'] }, 1, 0] } }
-        }
-      },
-      {
-        $group: {
-          _id: '$_id.repository',
-          providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          repository: '$_id',
-          providers: '$providers'
-        }
-      }
+      { $match: match },
+      { $lookup: {
+        from: 'findings',
+        localField: '_id',
+        foreignField: 'branchId',
+        as: 'findingsData'
+      }},
+      { $unwind: { path: '$findingsData', preserveNullAndEmptyArrays: true }},
+      { $group: {
+        _id:        { repository: '$repository', provider: '$findingsData.provider' },
+        high:       { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'HIGH'] }, 1, 0] }},
+        medium:     { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'MEDIUM'] }, 1, 0] }},
+        low:        { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'LOW'] }, 1, 0] }},
+        critical:   { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'CRITICAL'] }, 1, 0] }},
+        negligible: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'NEGLIGIBLE'] }, 1, 0] }}
+      }},
+      { $group: {
+        _id: '$_id.repository',
+        providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
+      }},
+      { $project: {
+        _id: 0,
+        repository: '$_id',
+        providers: '$providers'
+      }}
     ];
     models.branch.aggregate(pipeline).then(docs => {
       if (docs[0]?.providers?.[0]?.name) {
@@ -64,37 +59,31 @@ function repositories(name, skip) {
     let filter = !name
       ? null
       : {
-        repository: {
-          $regex: name,
-          $options: "i",
-        },
-      };
+          repository: {
+            $regex: name,
+            $options: "i",
+          },
+        };
 
     const pipeline = filter ? [{ $match: filter }] : [];
     pipeline.push(
-      {
-        $group: {
-          _id: '$repository',
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          repository: '$_id',
-        }
-      },
+      { $group: {
+        _id: '$repository',
+      }},
+      { $project: {
+        _id: 0,
+        repository: '$_id',
+      }},
       { $sort: { repository: 1 } },
       { $skip: skip || 0 },
       { $limit: 20 }
     );
 
     // You may modify the total pipeline as needed
-    const pipelineTotal = filter ? {
-      repository: {
+    const pipelineTotal = filter ? { repository: {
         $regex: name,
         $options: "i",
-      }
-    } : {};
+      }}:{};
 
     Promise.all([
       models.branch.aggregate(pipeline),
@@ -114,9 +103,9 @@ function repositories(name, skip) {
 
 function branches(repository, ref, skip) {
   return new Promise((resolve, reject) => {
-    
-    var filter = !ref ?
-      { repository } :
+
+    var filter = !ref ? 
+      { repository } : 
       {
         repository,
         ref: {
@@ -125,49 +114,8 @@ function branches(repository, ref, skip) {
         }
       };
 
-    var pipeline = [{ $match: filter }];
-    pipeline.push(
-      {
-        $lookup: {
-          from: 'findings',
-          localField: '_id',
-          foreignField: 'branchId',
-          as: 'findingsData'
-        }
-      },
-      { $unwind: { path: '$findingsData', preserveNullAndEmptyArrays: true } },
-      {
-        $group: {
-          _id: { ref: '$ref', _id: '$_id', provider: '$findingsData.provider' },
-          high: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'HIGH'] }, 1, 0] } },
-          medium: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'MEDIUM'] }, 1, 0] } },
-          low: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'LOW'] }, 1, 0] } },
-          critical: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'CRITICAL'] }, 1, 0] } },
-          negligible: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'NEGLIGIBLE'] }, 1, 0] } }
-        }
-      },
-      {
-        $group: {
-          _id: '$_id',
-          providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
-        }
-      },
-      {
-        $project: {
-          _id: '$_id._id',
-          ref: '$_id.ref',
-          providers: '$providers'
-        }
-      },
-      {
-        $sort: { ref: 1 }
-      },
-      { $skip: skip || 0 },
-      { $limit: 20 }
-    );
-
     Promise.all([
-      models.branch.aggregate(pipeline),
+      models.branch.find(filter).skip(skip||0).limit(20),
       models.branch.find(filter),
     ])
       .then((values) => {
