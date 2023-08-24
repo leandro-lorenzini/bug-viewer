@@ -288,7 +288,7 @@ function Findings() {
                             }}
                           >
                             <List.Item.Meta
-                              title={finding.title}
+                              title={finding.title || `${finding.message?.substring(0, 100)}...`}
                               description={
                                 <div>
 
@@ -346,7 +346,7 @@ function Findings() {
                       {selectedFinding ? (
                         <>
                           <Typography.Title style={{ marginTop: 0 }} level={5}>
-                            <BugOutlined /> {selectedFinding.title}
+                            <BugOutlined /> {selectedFinding.title || `${selectedFinding.message?.substring(0, 100)}...`}
                           </Typography.Title>
                           <Divider />
                           <Descriptions

@@ -12,6 +12,6 @@ else
     for file in $modified_files; do
         foldername=$(basename "$dir" | sed 's/\//__slash__/g')
         filename=$(basename "$file" | sed 's/\//__slash__/g')
-        semgrep scan $file --config --config ./scanner/semgrep.yml --json > "./scanner/tmp/result/__semgrep__${foldername}_${filename}.json"
+        semgrep scan $file --config ./scanner/semgrep.yml --json > "./scanner/tmp/result/__semgrep__${foldername}_${filename}.json"
     done
 fi
