@@ -148,15 +148,14 @@ function branches(repository, ref, skip) {
       },
       {
         $group: {
-          _id: '$_id._id',
-          ref: '$_id.ref',
+          _id: '$_id',
           providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
         }
       },
       {
         $project: {
-          _id: 0,
-          ref: '$_id',
+          _id: '$_id._id',
+          ref: '$_id.ref',
           providers: '$providers'
         }
       },
