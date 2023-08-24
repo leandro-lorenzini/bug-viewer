@@ -121,18 +121,16 @@
       "url": "extra.metadata.references",
       "title": "extra.metadata.vulnerability_class.0",
       "message": "extra.message",
-      "severity": "extra.metadata.impact",
+      "severity": "extra.severity",
       "file": "path",
       "line": "start.line",
       "resolution": "extra.fix",
       "cve": "extra.metadata.cwe.0"
     },
     "severities": {
-      "critical": "CRITICAL",
-      "high": "HIGH",
-      "medium": "MEDIUM",
-      "low": "LOW",
-      "negligible": "NEGLIGIBLE"
+      "high": "ERROR",
+      "medium": "WARNING",
+      "low": "INFO"
     },
     "name": "semgrep",
     "rootPath": "results"

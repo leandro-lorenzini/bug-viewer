@@ -14,6 +14,7 @@ import {
   BugOutlined,
   BranchesOutlined,
   DeleteOutlined,
+  ExclamationCircleOutlined
 } from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
@@ -26,6 +27,8 @@ function Branches() {
   const [page, setPage] = useState(null);
   const [total, setTotal] = useState({});
   const [ref, setRef] = useState(null);
+
+  const [providers, setProviders] = useState([]);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -54,6 +57,17 @@ function Branches() {
         withCredentials: true,
       })
       .then((response) => {
+
+        let providers = []
+        for (let result of response.data.results.data) {
+          for (let provider of (result.providers || [])) {
+            if (!providers.includes(provider.name)) {
+              providers.push(provider.name);
+            }
+          }
+        }
+        setProviders(providers.sort());
+
         setBranches(response.data.results.data);
         setTotal(response.data.results.total);
         setPage(response.data.page);
@@ -74,6 +88,37 @@ function Branches() {
         openNotificationWithIcon("error", "Branch could not be removed.");
       });
   }
+
+  const getSeverity = (severity, number) => {  
+    const levels = {
+      CRITICAL: (
+        <div style={{ color: "red" }}>
+          <ExclamationCircleOutlined /> { number } critical
+        </div>
+      ),
+      HIGH: (
+        <div style={{ color: "brown" }}>
+          <ExclamationCircleOutlined /> { number } High
+        </div>
+      ),
+      MEDIUM: (
+        <div style={{ color: "orange" }}>
+          <ExclamationCircleOutlined /> { number } Medium
+        </div>
+      ),
+      LOW: (
+        <div style={{ color: "black" }}>
+          <ExclamationCircleOutlined /> { number } Low
+        </div>
+      ),
+      NEGLIGIBLE: (
+        <div style={{ color: "grey" }}>
+          <ExclamationCircleOutlined /> { number } Negligibile
+        </div>
+      ),
+    }
+    return number ? levels[severity] : null;
+  };
 
   return (
     <div>
@@ -111,10 +156,26 @@ function Branches() {
 
         <Table loading={loading} pagination={false} dataSource={branches} columns={[
           {
-            title: 'Branch ref', dataIndex: 'ref', key: 'ref', width: '50%'
+            title: 'Branch ref', dataIndex: 'ref', key: 'ref'
           },
           {
-            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%'
+            title: 'Findings',
+            children: providers.map(provider => { return { 
+              title: provider,
+              render: (_, record) => {
+                return <>
+                  { record.providers?.filter(p => p.name === provider)[0] ? <>
+                    { getSeverity('CRITICAL', record.providers?.filter(p => p.name === provider)[0]?.critical) }
+                    { getSeverity('HIGH', record.providers?.filter(p => p.name === provider)[0]?.high) }
+                    { getSeverity('MEDIUM', record.providers?.filter(p => p.name === provider)[0]?.medium) }
+                    { getSeverity('LOW', record.providers?.filter(p => p.name === provider)[0]?.low) }
+                    { getSeverity('NEGLIGIBLE', record.providers?.filter(p => p.name === provider)[0]?.negligible) }</> : <>-</> }
+                </>
+              }
+            }})
+          },
+          {
+            title: 'Scan date', dataIndex: 'updatedAt', key: 'updatedAt'
           },
           {
             title: 'Actions', key: 'Actions',  render: (_, record) => (
