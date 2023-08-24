@@ -168,7 +168,7 @@ function Branches() {
 
         <Table loading={loading} pagination={false} dataSource={branches} columns={[
           {
-            title: 'Branch ref', dataIndex: 'ref', key: 'ref'
+            title: 'Branch ref', dataIndex: 'ref', key: 'ref', width: '10%'
           },
           {
             title: 'Findings',
@@ -193,7 +193,7 @@ function Branches() {
             }})
           },
           {
-            title: 'Actions', key: 'Actions',  render: (_, record) => (
+            title: 'Actions', key: 'Actions', width: '10%',  render: (_, record) => (
               <Space>
                 <Popconfirm
                     title="Remove branch"
