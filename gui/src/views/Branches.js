@@ -175,9 +175,6 @@ function Branches() {
             }})
           },
           {
-            title: 'Scan date', dataIndex: 'updatedAt', key: 'updatedAt'
-          },
-          {
             title: 'Actions', key: 'Actions',  render: (_, record) => (
               <Space>
                 <Popconfirm

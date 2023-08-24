@@ -138,7 +138,7 @@ function branches(repository, ref, skip) {
       { $unwind: { path: '$findingsData', preserveNullAndEmptyArrays: true } },
       {
         $group: {
-          _id: { ref: '$ref', provider: '$findingsData.provider' },
+          _id: { ref: '$ref', _id: '$_id', provider: '$findingsData.provider' },
           high: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'HIGH'] }, 1, 0] } },
           medium: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'MEDIUM'] }, 1, 0] } },
           low: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'LOW'] }, 1, 0] } },
@@ -148,7 +148,8 @@ function branches(repository, ref, skip) {
       },
       {
         $group: {
-          _id: '$_id.ref',
+          _id: '$_id._id',
+          ref: '$_id.ref',
           providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
         }
       },
