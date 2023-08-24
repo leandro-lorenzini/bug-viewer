@@ -200,7 +200,7 @@ Router.get("/branch", authenticated, (req, res) => {
 
       Promise.all(promises).then(values => {
         let promises = result.branches.map((b, index) => {
-          return {_id: b._id, ref: b.ref, providers: values[index].providers};
+          return {_id: b._id, ref: b.ref, providers: values[index]?.providers};
         });
 
         Promise.all(promises).then(values => {
