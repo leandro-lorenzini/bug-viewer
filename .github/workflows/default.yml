@@ -25,7 +25,6 @@ jobs:
           REF: ${{ github.ref }}
           FULL_CHECK: ${{github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
         run: |
-          wget https://github.com/leandro-lorenzini/bug-viewer/archive/refs/tags/latest.tar.gz
-          tar -xf latest.tar.gz
-          mv bug-viewer-latest/scanner . && rm -rf bug-viewer-latest latest.tar.gz
+          wget ${{ secrets.BUGVIEWER_SERVER }}/scanner.tar.gz
+          tar -xf scanner.tar.gz
           cd scanner && sh scanner.sh

@@ -29,6 +29,11 @@ http {
             try_files $uri /index.html;
         }
 
+        location /scanner/ {
+            root /usr/share/nginx/html/scanner;
+            try_files $uri $uri/ =404;
+        }
+
         location /api/ {
             proxy_pass http://api:3000/;
             proxy_http_version 1.1;
