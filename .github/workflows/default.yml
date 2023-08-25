@@ -25,6 +25,6 @@ jobs:
           REF: ${{ github.ref }}
           FULL_CHECK: ${{github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
         run: |
-          curl -O ${{ secrets.BUGVIEWER_SERVER }}/scanner.tar.gz
+          curl -k -O ${{ secrets.BUGVIEWER_SERVER }}/scanner.tar.gz
           tar -xf scanner.tar.gz
           cd scanner && sh scanner.sh
