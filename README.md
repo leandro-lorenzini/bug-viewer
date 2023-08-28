@@ -40,9 +40,7 @@ Although the main goal of this tool is to aggregate the results of any scanner, 
 Both examples (github and gitlab) can be used to guide you on how to set up the scanners in your repository, but if you are not using CI/CD at all, using those files as they are should work for you, just remember to set the variables/secrets ```BUGVIEWER_SERVER``` and ```BUGVIEWER_TOKEN``` in your git repository settings.
 
 #### Implementing your own scanners
-If you wish to use the scanner scripts provided in this repository, just make sure that the OS you are running the scans has bash and curl installed. Docker engine and nodeJS should also be installed if you intend to scan docker images or JavaScript files.
-
-If you want to implement the scanners youselft, a sample of how scan results should be sent to the server can be found [here](blob/main/scanner/submit.sh). The ```JSON parser``` is selected according to the uploaded file(s) name, make sure to include ```__ParserName__``` in the filename. Parsers can be viewd in https://<SERVER_NAME>/parser. You can use one of the existing parsers or create your own. ```JSON Parser``` is the congiguration that tells the tool how to map the results from the different scanners to the fields that you can see on the web interface.
+If you want to implement the scanners youselft, a sample of how scan results should be sent to the server can be found [here](scanner/submit.sh). The ```JSON parser``` is selected according to the uploaded file(s) name, make sure to include ```__ParserName__``` in the filename. Parsers can be viewd in https://<SERVER_NAME>/parser. You can use one of the existing parsers or create your own. ```JSON Parser``` is the congiguration that tells the tool how to map the results from the different scanners to the fields that you can see on the web interface.
 
 ```
 curl --location 'https://SERVER_NAME/repository' \
