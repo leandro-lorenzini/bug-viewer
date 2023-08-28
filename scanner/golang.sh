@@ -10,4 +10,4 @@ curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | s
 GO_PROJECT_DIR=$(find . -name go.mod -exec dirname {} \; 2>/dev/null | head -n 1)
 
 echo "Scanning Golang files"
-gosec -fmt=json --out=./scanner/tmp/result/__gosec__.json "$PROJECT_DIR"
+./bin/gosec -fmt=json --out=./scanner/tmp/result/__gosec__.json "$PROJECT_DIR"
