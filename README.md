@@ -34,7 +34,7 @@ If you didn't change the nginx ports, the server ui should be acessible under th
 Although the main goal of this tool is to aggregate the results of any scanner, I've created some scripts that will run some common scanner tools such as eslint, bandit, gitleaks and etc...  I only tested the scanner using github and gitlab shared runners, but you should also be able to get it working in other environments, more information below.
 
 #### CI/CD Working example
-- Github example [.github/workflows/.default.yml](.github/workflows/.default.yml)
+- Github example [.github/workflows/default.yml](.github/workflows/default.yml)
 - Girlab example  [.gitlab-ci.yml](.gitlab-ci.yml)
 
 Both examples (github and gitlab) can be used to guide you on how to set up the scanners in your repository, but if you are not using CI/CD at all, using those files as they are should work for you, just remember to set the variables/secrets ```BUGVIEWER_SERVER``` and ```BUGVIEWER_TOKEN``` in your git repository settings.
