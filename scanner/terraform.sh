@@ -10,10 +10,4 @@ cd ../../
 
 echo "Scanning Terraform files"
 # Run scanner on the whole project
-if [ "$FULL_CHECK" = true ]; then
-    tfsec . --format json --out ./scanner/tmp/result/__tfsec__results.json
-else
-    # Run scanner on changed files only
-    mkdir -p tf-changed-files
-    cp $(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep '\.tf$') tf-changed-files && tfsec tf-changed-files --format json --out ./scanner/tmp/result/__tfsec__results.json
-fi
+tfsec . --format json --out ./scanner/tmp/result/__tfsec__results.json

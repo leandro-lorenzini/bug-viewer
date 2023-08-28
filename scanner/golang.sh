@@ -11,4 +11,4 @@ chmod +x ./bin/gosec
 GO_PROJECT_DIR=$(find . -name go.mod -exec dirname {} \; 2>/dev/null | head -n 1)
 
 echo "Scanning Golang files"
-./bin/gosec -fmt=json --out=./scanner/tmp/result/__gosec__.json "$PROJECT_DIR"
+./bin/gosec -fmt=json --out=./scanner/tmp/result/__gosec__.json "$GO_PROJECT_DIR"
