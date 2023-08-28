@@ -329,8 +329,10 @@ function Findings() {
                       <div
                         style={{
                           marginTop: 10,
+                          marginBottom: 15,
                           borderTop: "1px solid rgba(5,5,5,.06)",
                           paddingTop: 15,
+                          textAlign: "center"
                         }}
                       >
                         <Pagination
