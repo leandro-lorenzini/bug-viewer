@@ -38,6 +38,15 @@ fi
 
 bash ./scanner/semgrep.sh
 
+# GOLANG SCANNING
+if [ "$go" = "true" ]; then
+    bash ./scanner/golang.sh
+    if ! ls "$directory"*__gosec__* 1> /dev/null 2>&1; then
+        echo "No files containing '__gosec__' found in the results directory."
+        exit 1
+    fi
+fi
+
 # DOCKER IMAGE SCANNING
 if [ "$docker" = "true" ]; then
     bash ./scanner/docker.sh
@@ -61,15 +70,6 @@ if [ "$py" = "true" ]; then
     bash ./scanner/python.sh
     if ! ls "$directory"*__bandit__* 1> /dev/null 2>&1; then
         echo "No files containing '__bandit__' found in the results directory."
-        exit 1
-    fi
-fi
-
-# GOLANG SCANNING
-if [ "$go" = "true" ]; then
-    bash ./scanner/golang.sh
-    if ! ls "$directory"*__gosec__* 1> /dev/null 2>&1; then
-        echo "No files containing '__gosec__' found in the results directory."
         exit 1
     fi
 fi
