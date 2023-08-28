@@ -142,7 +142,7 @@ function Repositories() {
 
         <Table loading={loading} pagination={false} dataSource={repositories} scroll={{ x: 1300 }} columns={[
           {
-            title: 'Repository name', dataIndex: 'repository', key: 'repository', fixed: 'left', width: '20%'
+            title: 'Repository name', dataIndex: 'repository', key: 'repository', fixed: 'left'
           },
           {
             title: 'Findings on main branch',
