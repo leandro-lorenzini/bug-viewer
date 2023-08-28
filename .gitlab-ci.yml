@@ -15,7 +15,7 @@ scan_job:
     - wget https://github.com/leandro-lorenzini/bug-viewer/archive/refs/tags/latest.tar.gz
     - curl -k -O $BUGVIEWER_SERVER/scanner.tar.gz
     - tar -xf scanner.tar.gz
-    - cd scanner && sh scanner.sh
+    - cd scanner && bash scanner.sh
   artifacts:
     paths:
       - scanner/tmp/result/*

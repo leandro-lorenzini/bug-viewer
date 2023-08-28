@@ -36,11 +36,11 @@ else
     export MODIFIED_FILES=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH))
 fi
 
-sh ./scanner/semgrep.sh
+bash ./scanner/semgrep.sh
 
 # DOCKER IMAGE SCANNING
 if [ "$docker" = "true" ]; then
-    sh ./scanner/docker.sh
+    bash ./scanner/docker.sh
     if ! ls "$directory"*__grype__* 1> /dev/null 2>&1; then
         echo "No files containing '__grype__' found in the results directory."
         exit 1
@@ -49,7 +49,7 @@ fi
 
 # JAVASCRIPT SCANNING
 if [ "$js" = "true" ]; then
-    sh ./scanner/javascript.sh
+    bash ./scanner/javascript.sh
     if ! ls "$directory"*__eslint__* 1> /dev/null 2>&1; then
         echo "No files containing '__eslint__' found in the results directory."
         exit 1
@@ -58,7 +58,7 @@ fi
 
 # PYTHON SCANNING
 if [ "$py" = "true" ]; then
-    sh ./scanner/python.sh
+    bash ./scanner/python.sh
     if ! ls "$directory"*__bandit__* 1> /dev/null 2>&1; then
         echo "No files containing '__bandit__' found in the results directory."
         exit 1
@@ -67,7 +67,7 @@ fi
 
 # GOLANG SCANNING
 if [ "$go" = "true" ]; then
-    sh ./scanner/go.sh
+    bash ./scanner/go.sh
     if ! ls "$directory"*__gosec__* 1> /dev/null 2>&1; then
         echo "No files containing '__gosec__' found in the results directory."
         exit 1
@@ -76,7 +76,7 @@ fi
 
 # TERRAFORM SCANNING
 if [ "$tf" = "true" ]; then
-    sh ./scanner/terraform.sh
+    bash ./scanner/terraform.sh
     if ! ls "$directory"*__tfsec__* 1> /dev/null 2>&1; then
         echo "No files containing '__tfsec__' found in the results directory."
         exit 1
@@ -85,7 +85,7 @@ fi
 
 # KUBERNETES SCANNING
 if [ "$k8" = "true" ]; then
-    sh ./scanner/kubernetes.sh
+    bash ./scanner/kubernetes.sh
     if ! ls "$directory"*__checkov__* 1> /dev/null 2>&1; then
         echo "No files containing '__checkov__' found in the results directory."
         exit 1
@@ -93,11 +93,11 @@ if [ "$k8" = "true" ]; then
 fi
 
 # HARDCODED PASSWORDS SCANNING
-sh ./scanner/gitleaks.sh
+bash ./scanner/gitleaks.sh
 if ! ls "$directory"*__gitleaks__* 1> /dev/null 2>&1; then
     echo "No files containing '__gitleaks__' found in the results directory."
     exit 1
 fi
 
 # SUBMIT THE RESULT TO THE BUG-VIEWER SERVER
-sh ./scanner/submit.sh
+bash ./scanner/submit.sh

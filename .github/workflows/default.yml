@@ -27,4 +27,4 @@ jobs:
         run: |
           curl -k -O ${{ secrets.BUGVIEWER_SERVER }}/scanner.tar.gz
           tar -xf scanner.tar.gz
-          cd scanner && sh scanner.sh
+          cd scanner && bash scanner.sh
