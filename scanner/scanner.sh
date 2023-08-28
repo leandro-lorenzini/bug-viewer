@@ -67,7 +67,7 @@ fi
 
 # GOLANG SCANNING
 if [ "$go" = "true" ]; then
-    bash ./scanner/go.sh
+    bash ./scanner/golang.sh
     if ! ls "$directory"*__gosec__* 1> /dev/null 2>&1; then
         echo "No files containing '__gosec__' found in the results directory."
         exit 1
