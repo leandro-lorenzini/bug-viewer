@@ -168,7 +168,7 @@ function App() {
           />
         </Sider>
         <Layout style={{ marginLeft: !collapsed ? 200 : 90 }}>
-          <Content style={{ paddingRight: 20, paddingLeft: 20 }}>
+          <Content style={{ paddingRight: 10, paddingLeft: 10 }}>
             <Routes>
               <Route
                 key={"repository"}
