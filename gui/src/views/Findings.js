@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   Breadcrumb,
   Col,
-  Collapse,
+  Tabs,
   Descriptions,
   Divider,
   Empty,
@@ -23,6 +23,9 @@ import {
   FileOutlined,
   SettingOutlined,
   FunctionOutlined,
+  ReadOutlined,
+  ThunderboltOutlined,
+  ExceptionOutlined
 } from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
@@ -348,133 +351,152 @@ function Findings() {
                           <Typography.Title style={{ marginTop: 0 }} level={5}>
                             <BugOutlined /> {selectedFinding.title || `${selectedFinding.message?.substring(0, 100)}...`}
                           </Typography.Title>
-                          <Divider />
-                          <Descriptions
-                            items={[
-                              {
-                                key: "severity",
-                                label: (
-                                  <span>
-                                    <ExclamationCircleOutlined /> Severity
-                                  </span>
-                                ),
-                                children: (
-                                  <span
-                                    className={`severity ${selectedFinding.severity}`}
-                                  >
-                                    {selectedFinding.severity}
-                                  </span>
-                                ),
-                              },
-                              {
-                                key: "provider",
-                                label: (
-                                  <span>
-                                    <SettingOutlined /> Provider
-                                  </span>
-                                ),
-                                children: selectedFinding.provider,
-                              },
-                              {
-                                key: "cve",
-                                label: (
-                                  <span>
-                                    <SettingOutlined /> CVE
-                                  </span>
-                                ),
-                                children: selectedFinding.cve,
-                              },
-                              {
-                                key: "ruleId",
-                                label: (
-                                  <span>
-                                    <SettingOutlined /> Rule
-                                  </span>
-                                ),
-                                children: selectedFinding.ruleId,
-                                span: 3,
-                              },
-                              {
-                                key: "file",
-                                label: (
-                                  <span>
-                                    <FileOutlined /> File
-                                  </span>
-                                ),
-                                children: `${selectedFinding.file}${
-                                  selectedFinding.line?.length ? ':' + selectedFinding.line : ''
-                                }`,
-                                span: 3,
-                              },
-                              {
-                                key: "resource",
-                                label: (
-                                  <span>
-                                    <FunctionOutlined /> Resource
-                                  </span>
-                                ),
-                                children: selectedFinding.resource,
-                              },
-                              {
-                                key: "package",
-                                label: (
-                                  <span>
-                                    <PushpinOutlined /> Package
-                                  </span>
-                                ),
-                                children: selectedFinding.package,
-                                span: 2,
-                              },
-                              {
-                                key: "version",
-                                label: (
-                                  <span>
-                                    <PushpinOutlined /> Version
-                                  </span>
-                                ),
-                                children: selectedFinding.version,
-                                span: 1,
-                              },
-                              {
-                                key: "url",
-                                label: (
-                                  <span>
-                                    <LinkOutlined /> URL
-                                  </span>
-                                ),
-                                children: selectedFinding.url?.length ? (
-                                  selectedFinding.url.map(url => {
-                                    return <div style={{ display: 'block' }}><a
-                                      href={url}
-                                      rel="noreferrer"
-                                      target="_blank"
-                                    >
-                                      {url}
-                                    </a></div>
-                                  })
-                                ) : null,
-                                span: 3,
-                              },
-                            ].filter((item) => item.children)}
-                          />
-                          <Divider />
-
-                          <Typography.Title level={5}>Details</Typography.Title>
-                          <Typography.Paragraph>{selectedFinding.message}</Typography.Paragraph>
-                          <Typography.Paragraph>{selectedFinding.impact}</Typography.Paragraph>
-
-                          {!selectedFinding.resolutiom ? null : (
-                            <>
-                              <Divider />
-                              <Typography.Title level={5}>
-                                Resolution
-                              </Typography.Title>
-                              {formatLongText(selectedFinding.resolutiom)}
-                            </>
-                          )}
-                          <Collapse items={[
-                            { key: 'raw', label: 'Full scan result', children: formatLongText(selectedFinding.details)  }
+                          <Tabs items={[
+                            {
+                              key: '1',
+                              label: 'Summary',
+                              children: <>
+                                <Descriptions
+                                  items={[
+                                    {
+                                      key: "severity",
+                                      label: (
+                                        <span>
+                                          <ExclamationCircleOutlined /> Severity
+                                        </span>
+                                      ),
+                                      children: (
+                                        <span
+                                          className={`severity ${selectedFinding.severity}`}
+                                        >
+                                          {selectedFinding.severity}
+                                        </span>
+                                      ),
+                                    },
+                                    {
+                                      key: "provider",
+                                      label: (
+                                        <span>
+                                          <SettingOutlined /> Provider
+                                        </span>
+                                      ),
+                                      children: selectedFinding.provider,
+                                    },
+                                    {
+                                      key: "cve",
+                                      label: (
+                                        <span>
+                                          <SettingOutlined /> CVE
+                                        </span>
+                                      ),
+                                      children: selectedFinding.cve,
+                                    },
+                                    {
+                                      key: "ruleId",
+                                      label: (
+                                        <span>
+                                          <SettingOutlined /> Rule
+                                        </span>
+                                      ),
+                                      children: selectedFinding.ruleId,
+                                      span: 3,
+                                    },
+                                    {
+                                      key: "file",
+                                      label: (
+                                        <span>
+                                          <FileOutlined /> File
+                                        </span>
+                                      ),
+                                      children: `${selectedFinding.file}${
+                                        selectedFinding.line?.length ? ':' + selectedFinding.line : ''
+                                      }`,
+                                      span: 3,
+                                    },
+                                    {
+                                      key: "resource",
+                                      label: (
+                                        <span>
+                                          <FunctionOutlined /> Resource
+                                        </span>
+                                      ),
+                                      children: selectedFinding.resource,
+                                    },
+                                    {
+                                      key: "package",
+                                      label: (
+                                        <span>
+                                          <PushpinOutlined /> Package
+                                        </span>
+                                      ),
+                                      children: selectedFinding.package,
+                                      span: 2,
+                                    },
+                                    {
+                                      key: "version",
+                                      label: (
+                                        <span>
+                                          <PushpinOutlined /> Version
+                                        </span>
+                                      ),
+                                      children: selectedFinding.version,
+                                      span: 1,
+                                    },
+                                  ].filter((item) => item.children)}
+                                />
+                                 <Divider/>
+                                 <Descriptions
+                                  items={[
+                                    {
+                                      key: 'message',
+                                      label: <span><ReadOutlined /> Message</span>,
+                                      span: 3,
+                                      children: selectedFinding.message
+                                    },
+                                    {
+                                      key: 'impact',
+                                      label: <span><ExceptionOutlined /> Impact</span>,
+                                      span: 3,
+                                      children: selectedFinding.impact
+                                    },
+                                    {
+                                      key: 'resolution',
+                                      label: <span><ThunderboltOutlined /> Resolution</span>,
+                                      span: 3,
+                                      children: selectedFinding.resolution
+                                    },
+                                    {
+                                      key: "url",
+                                      label: (
+                                        <span>
+                                          <LinkOutlined /> Reference
+                                        </span>
+                                      ),
+                                      children: selectedFinding.url?.length ? (
+                                        selectedFinding.url.map(url => {
+                                          return <a
+                                            href={url}
+                                            rel="noreferrer"
+                                            target="_blank"
+                                          >
+                                            {url}
+                                          </a>
+                                        })[0]
+                                      ) : null,
+                                      span: 3,
+                                    },
+                                  ].filter((item) => item.children)}
+                                />
+                              </>
+                            },
+                            {
+                              key: '2',
+                              label: 'Details',
+                              children: formatLongText(selectedFinding.details)
+                              
+                            }
                           ]} />
+                          
                         </>
                       ) : (
                         <Empty
