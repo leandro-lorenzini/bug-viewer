@@ -13,8 +13,8 @@ scan_job:
 
     - apk add wget curl
     - wget https://github.com/leandro-lorenzini/bug-viewer/archive/refs/tags/latest.tar.gz
-    - tar -xf latest.tar.gz
-    - mv bug-viewer-latest/scanner . && rm -rf bug-viewer-latest latest.tar.gz
+    - curl -k -O $BUGVIEWER_SERVER/scanner.tar.gz
+    - tar -xf scanner.tar.gz
     - cd scanner && sh scanner.sh
   artifacts:
     paths:
