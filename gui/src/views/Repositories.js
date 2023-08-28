@@ -165,6 +165,9 @@ function Repositories() {
             }})
           },
           {
+            title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', width: '15%'
+          },
+          {
             title: 'Actions', key: 'Actions', width: '10%', render: (_, record) => (
               <Space>
                 <Button type="link" icon={<BranchesOutlined/>} onClick={() => {

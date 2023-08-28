@@ -67,12 +67,17 @@ function repositories(name, skip) {
 
     const pipeline = filter ? [{ $match: filter }] : [];
     pipeline.push(
+      {
+        $sort: { updatedAt: -1 }
+      },
       { $group: {
         _id: '$repository',
+        updatedAt: { $first: '$updatedAt' }
       }},
       { $project: {
         _id: 0,
         repository: '$_id',
+        updatedAt: 1
       }},
       { $sort: { repository: 1 } },
       { $skip: skip || 0 },
