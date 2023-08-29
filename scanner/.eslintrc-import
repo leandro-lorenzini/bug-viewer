@@ -34,6 +34,9 @@
     "sonarjs/no-useless-catch": "warn",
     "sonarjs/prefer-object-literal": "warn",
     "sonarjs/prefer-immediate-return": "warn",
-    "sonarjs/prefer-single-boolean-return": "warn"
+    "sonarjs/prefer-single-boolean-return": "warn",
+    "xss/no-location-href-assign": [ 2, {
+      "escapeFunc": "encodeURI"
+    }]
   }
 }

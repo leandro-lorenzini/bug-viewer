@@ -78,7 +78,10 @@ Router.post(
 );
 
 Router.get("/info", (req, res) => {
-  res.send(req.session);
+  res.json({
+    userId: req.session.userId,
+    admin: req.session.admin
+  });
 });
 
 Router.get("/fail", (req, res) => {
