@@ -22,7 +22,7 @@ jobs:
           SERVER: ${{ secrets.BUGVIEWER_SERVER }} # Your server address
           TOKEN:  ${{ secrets.BUGVIEWER_TOKEN }}  # Token is created using BugViewer's web interface
           REPOSITORY: ${{ github.repository }}
-          REF: ${{ github.ref }}
+          REF: ${{ github.head_ref || github.ref }}
           FULL_CHECK: ${{github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'}}
         run: |
           curl -k -O ${{ secrets.BUGVIEWER_SERVER }}/scanner.tar.gz

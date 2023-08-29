@@ -7,23 +7,19 @@ stages:
 scan_job:
   stage: scan
   script:
-    - apk update
-    - apk add curl
-    - apk add --update nodejs npm
-
-    - apk add wget curl
+    - apk add --update bash curl nodejs npm libc-dev gcc python3-dev py-pip
     - curl -k -O $BUGVIEWER_SERVER/scanner.tar.gz
     - tar -xf scanner.tar.gz
     - cd scanner && bash scanner.sh
   artifacts:
     paths:
-      - scanner/tmp/result/*
+      - scanner/tmp/result/* #Optional - For debug purposes
 
 variables:
   BRANCH: main # Replace with your protected branch name
   SERVER: $BUGVIEWER_SERVER # Your server address, set this in the CI/CD environment variables
   TOKEN: $BUGVIEWER_TOKEN # Token is created using BugViewer's web interface, set this in the CI/CD environment variables
-  REPOSITORY: $CI_PROJECT_URL
+  REPOSITORY: $CI_PROJECT_PATH
   REF: $CI_COMMIT_REF_NAME
   FULL_CHECK: "false" # Set this variable to true when scheduling the periodic scan
 
