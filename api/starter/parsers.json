@@ -2,6 +2,7 @@
   {
     "fields": {
       "title": "message",
+      "message": "message",
       "ruleId": "ruleId",
       "severity": "severity",
       "file": "filePath",
@@ -9,17 +10,18 @@
     },
     "severities": {
       "high": "2",
-      "medium": "1",
-      "low": "0"
+      "medium": "",
+      "low": "1",
+      "negligible": "0"
     },
     "name": "eslint",
-    "description": "Javascript/Typescript with security plugins",
-    "unwind": "messages"
+    "unwind": "messages",
+    "description": "Javascript/Typescript with security plugins"
   },
   {
     "fields": {
-      "ruleId": "test_name",
       "title": "issue_text",
+      "ruleId": "test_name",
       "severity": "issue_severity",
       "file": "filename",
       "line": "line_number"
@@ -31,14 +33,14 @@
       "low": "LOW"
     },
     "name": "bandit",
-    "description": "Python vulnerability and code smell scanner",
-    "rootPath": "results"
+    "rootPath": "results",
+    "description": "Python vulnerability and code smell scanner"
   },
   {
     "fields": {
+      "title": "details",
       "ruleId": "rule_id",
       "url": "cwe.url",
-      "title": "details",
       "severity": "severity",
       "file": "file",
       "line": "line"
@@ -50,15 +52,15 @@
       "low": "LOW"
     },
     "name": "gosec",
-    "description": "Golang vulnerability and code smell scanner",
-    "rootPath": "Issues"
+    "rootPath": "Issues",
+    "description": "Golang vulnerability and code smell scanner"
   },
   {
     "fields": {
-      "ruleId": "long_id",
-      "url": "links",
       "title": "rule_description",
       "message": "description",
+      "ruleId": "long_id",
+      "url": "links",
       "impact": "impact",
       "resource": "resource",
       "severity": "severity",
@@ -72,22 +74,22 @@
       "medium": "MEDIUM",
       "low": "LOW"
     },
-    "description": "Terraform vulnerability scanner",
     "name": "tfsec",
-    "rootPath": "results"
+    "rootPath": "results",
+    "description": "Terraform vulnerability scanner"
   },
   {
     "fields": {
+      "title": "check_name",
       "ruleId": "check_id",
       "url": "guideline",
-      "title": "check_name",
       "severity": "\"HIGH\"",
       "file": "file_path",
       "line": "file_line_range"
     },
     "name": "checkov",
-    "description": "Kubernetes vulnerability scanner",
-    "rootPath": "results.failed_checks"
+    "rootPath": "results.failed_checks",
+    "description": "Kubernetes vulnerability scanner"
   },
   {
     "fields": {
@@ -98,12 +100,14 @@
       "line": "StartLine",
       "resolution": "\"Invalidate any password/secret and update the projects gitleaks-baseline.json\""
     },
-    "description": "Git respository hardcoded secrets scanner",
-    "name": "gitleaks"
+    "name": "gitleaks",
+    "description": "Git repository hardcoded secrets scanner"
   },
   {
     "fields": {
       "title": "\"Docker image vulnerability\"",
+      "message": "vulnerability.description",
+      "ruleId": "",
       "url": "vulnerability.dataSource",
       "severity": "vulnerability.severity",
       "file": "/source.target.userInput",
@@ -119,15 +123,15 @@
       "negligible": "Negligible"
     },
     "name": "grype",
-    "description": "Docker image vulnerability scanner",
-    "rootPath": "matches"
+    "rootPath": "matches",
+    "description": "Docker image vulnerability scanner"
   },
   {
     "fields": {
-      "ruleId": "check_id",
-      "url": "extra.metadata.references",
       "title": "extra.metadata.vulnerability_class.0",
       "message": "extra.message",
+      "ruleId": "check_id",
+      "url": "extra.metadata.references",
       "severity": "extra.severity",
       "file": "path",
       "line": "start.line",
@@ -135,12 +139,14 @@
       "cve": "extra.metadata.cwe.0"
     },
     "severities": {
+      "critical": "",
       "high": "ERROR",
       "medium": "WARNING",
-      "low": "INFO"
+      "low": "INFO",
+      "negligible": ""
     },
     "name": "semgrep",
-    "description": "Multiple languages vulnerability scanner",
-    "rootPath": "results"
+    "rootPath": "results",
+    "description": "Multiple languages vulnerability scanner"
   }
 ]
