@@ -96,7 +96,7 @@ function Signin(props) {
                 htmlType="button"
                 style={{ width: "100%" }}
                 onClick={() => {
-                  window.location.href = "/api/auth/sso";
+                  window.location.href = encodeURI("/api/auth/sso");
                 }}
               >
                 Log in using SSO

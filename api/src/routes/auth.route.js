@@ -36,7 +36,10 @@ Router.post("/", async (req, res) => {
         req.session.userId = user._id;
         req.session.admin = user.admin;
         req.session.save(() => {
-          res.send(req.session);
+          res.send({
+            userId: user._id,
+            admin: user.admin
+          });
         });
       } else {
         res.status(401).send();
@@ -77,7 +80,10 @@ Router.post("/change-password", authenticated, async (req, res) => {
 
 // Return current session
 Router.get("/", (req, res) => {
-  res.json(req.session);
+  res.json({ 
+    userId: req.session.userId,
+    admin: req.session.admin
+  });
 });
 
 Router.use("/sso", require("./sso.route"));
