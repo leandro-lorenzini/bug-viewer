@@ -40,6 +40,7 @@ app.use("/settings", require("./src/routes/settings.route"));
 app.use("/parser", require("./src/routes/parser.route"));
 
 // Connect to the database
+
 mongoose
   .connect(process.env.MONGO_URI || "mongodb://mongo:27017/bug-viewer")
   .then(() => {
