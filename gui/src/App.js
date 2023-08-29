@@ -120,7 +120,7 @@ function App() {
                 icon: <KeyOutlined />,
               },
               {
-                key: "parsers",
+                key: "parser",
                 label: <Link to="/parser">Parsers</Link>,
                 icon: <RetweetOutlined />,
                 admin: true,
