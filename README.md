@@ -1,6 +1,6 @@
 # bug-viewer
 
-The tool agregates results from different open source code scanners and display those results in a web interface. In a nutshell, it receives scanner results in JSON format and display them in a human readable format. Our implementation of some popular scanners can be found under the scanner folder but feel free to use your implementation.
+The tool agregates results from different open source code scanners and display those results in a web interface. In a nutshell, it receives scanner results in JSON format and display them in a human readable format. Our implementation of some popular scanners can be found under the scanner folder but feel free to use your own implementation.
 
 ## Deployment
 
