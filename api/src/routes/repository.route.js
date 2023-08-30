@@ -105,7 +105,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
 
   // Upsert repository and scan
   try {
-    let branchId = await controller.upsert(value.name, value.ref, findings || []);
+    let upsertResult = await controller.upsert(value.name, value.ref, findings || []);
     if (findings?.length) {
       for (let finding of findings) {
         if (["CRITICAL", "HIGH"].includes(finding.severity)) {
@@ -113,7 +113,10 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
             .status(207)
             .send(
               "Scan results have been saved, one or more serious bug has been found! " +
-              `Go to ${req.protocol}://${req.hostname}/repository/branch/${branchId}?repository=${value.ref.replace(/\//g, "%2F")} for details.`
+              `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?
+              ref=${value.ref.replace(/\//g, "%2F")}&
+              repository=${upsertResult.repository._id}&
+              repositoryName=${upsertResult.repository.name} for details.`
             );
         }
       }

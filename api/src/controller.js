@@ -127,7 +127,7 @@ function upsert(repository, ref, findings) {
           f.branchId = branchId;
           return f;
         }));
-        resolve(branchId);
+        resolve({repository, branchId: branchId });
       } catch(error) {
         reject(error);
       }
