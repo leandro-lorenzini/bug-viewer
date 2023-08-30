@@ -266,7 +266,7 @@ function Findings() {
             <Content
               style={{
                 backgroundColor: "white",
-                padding: "5px 20px",
+                padding: "1px",
               }}
             >
               { loading ? <Skeleton active/> :
@@ -279,14 +279,18 @@ function Findings() {
                       span={8}
                       style={{
                         borderRight: "1px solid rgba(5,5,5,.06)",
-                        paddingRight: 15,
+                        
                       }}
                     >
                       <List
                         dataSource={findings}
                         renderItem={(finding) => (
                           <List.Item
-                            style={{ cursor: "pointer" }}
+                            style={{ 
+                              cursor: "pointer", 
+                              paddingRight: 15, 
+                              paddingLeft: 15, 
+                              backgroundColor: selectedFinding?._id === finding._id ? '#f5f5f5':'#ffffff' }}
                             onClick={() => {
                               setSelectedFinding(null);
                               setSelectedFinding(finding);
@@ -371,10 +375,8 @@ function Findings() {
                                         </span>
                                       ),
                                       children: (
-                                        <span
-                                          className={`severity ${selectedFinding.severity}`}
-                                        >
-                                          {selectedFinding.severity}
+                                        <span>
+                                          {selectedFinding.severity.toLowerCase()}
                                         </span>
                                       ),
                                     },
