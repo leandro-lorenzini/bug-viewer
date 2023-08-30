@@ -140,7 +140,7 @@ function Findings() {
   return (
     <Layout>
       <Typography.Title level={3}>
-        <BugOutlined /> Findings
+        <BugOutlined /> Findings - {searchParams.get('ref')}
       </Typography.Title>
       <Breadcrumb
         style={{ marginBottom: 20 }}
@@ -149,7 +149,10 @@ function Findings() {
             title: <Link to="/">Repositories</Link>,
           },
           {
-            title: <Link to={`/repository/branch/?${queryString.stringify({ repository: searchParams.get('repository')})}`} >Branches</Link>,
+            title: <Link to={`/repository/branch/?${queryString.stringify({ 
+              repository: searchParams.get('repository'),
+              repositoryName: searchParams.get('repositoryName')
+            })}`} >{searchParams.get('repositoryName')}</Link>,
           },
           {
             title: "Findings",

@@ -135,7 +135,7 @@ function Branches() {
   return (
     <div>
       <Typography.Title level={3}>
-        <BranchesOutlined /> Branches - {searchParams.get('repository')}
+        <BranchesOutlined /> Branches - {searchParams.get('repositoryName')}
       </Typography.Title>
       <Breadcrumb
         style={{ marginBottom: 20 }}
@@ -210,7 +210,11 @@ function Branches() {
                   <Button type="link" danger icon={<DeleteOutlined/>}>Delete</Button>
                 </Popconfirm>
                 <Button type="link" icon={<BugOutlined/>} onClick={() => {
-                    navigate({ pathname: record._id, search: `?${queryString.stringify({ repository: searchParams.get('repository')})}` });
+                    navigate({ pathname: record._id, search: `?${queryString.stringify({ 
+                      repository: searchParams.get('repository'), 
+                      repositoryName: searchParams.get('repositoryName'),
+                      ref: record.ref
+                    })}`});
                     }}>View findings</Button>
               </Space>
             )

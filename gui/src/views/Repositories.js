@@ -142,7 +142,7 @@ function Repositories() {
 
         <Table loading={loading} pagination={false} dataSource={repositories} scroll={{ x: 1600 }} columns={[
           {
-            title: 'Repository name', dataIndex: 'repository', key: 'repository', fixed: 'left'
+            title: 'Repository name', dataIndex: 'name', key: 'name', fixed: 'left'
           },
           {
             title: 'Findings on main branch',
@@ -171,7 +171,7 @@ function Repositories() {
             title: '', key: 'Actions', fixed: 'right', render: (_, record) => (
               <Space>
                 <Button type="link" icon={<BranchesOutlined/>} onClick={() => {
-                      navigate({ pathname: 'branch', search: `?${queryString.stringify({ repository: record.repository})}` });
+                      navigate({ pathname: 'branch', search: `?${queryString.stringify({ repository: record._id, repositoryName: record.name })}` });
                     }}>Branches</Button>
               </Space>
             )

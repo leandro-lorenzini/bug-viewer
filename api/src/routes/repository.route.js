@@ -143,20 +143,24 @@ Router.get("/", authenticated, (req, res) => {
     .then((result) => {
       // Get stats
       let promises = result.repositories.map(r => {
-        return controller.mainBranch(r.repository);
+        return controller.mainBranch(r._id);
       })
 
       Promise.all(promises).then(values => {
         
-        promises = result.repositories.map((r, index) => {
-          r.providers = values[index]?.providers;
-          return r;
+        let promises = result.repositories.map((r, index) => {
+          return {
+            _id: r._id,
+            name: r.name,
+            providers: values[index]
+          };
         });
 
-        Promise.all(promises).then(values => {
+        Promise.all(promises).then(() => {
+          console.log(promises)
           res.json({
             results: {
-              data: values,
+              data: promises,
               total: result.total,
             },
             page: {
@@ -197,12 +201,12 @@ Router.get("/branch", authenticated, (req, res) => {
     .then((result) => {
       // Get stats
       let promises = result.branches.map(b => {
-        return controller.mainBranch(b.repository, b._id);
+        return controller.mainBranch(value.repository, b._id);
       })
 
       Promise.all(promises).then(values => {
         let promises = result.branches.map((b, index) => {
-          return {_id: b._id, ref: b.ref, updatedAt: b.updatedAt, providers: values[index]?.providers};
+          return {_id: b._id, ref: b.ref, updatedAt: b.updatedAt, providers: values[index]};
         });
 
         Promise.all(promises).then(values => {

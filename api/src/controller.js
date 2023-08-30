@@ -2,105 +2,67 @@ const models = require("./models");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-function mainBranch (repository, branchId) {
+function mainBranch (repositoryId, branchId) {
   return new Promise((resolve, reject) => {
-    
-    const match = !branchId ? {
-      repository,
-      $or: [
-        { ref: { $regex: 'main' } },
-        { ref: { $regex: 'master' } },
-      ]
-    } : {
-      _id: new ObjectId(branchId)
-    }
 
-    const pipeline = [
-      { $match: match },
-      { $lookup: {
-        from: 'findings',
-        localField: '_id',
-        foreignField: 'branchId',
-        as: 'findingsData'
-      }},
-      { $unwind: { path: '$findingsData', preserveNullAndEmptyArrays: true }},
-      { $group: {
-        _id:        { repository: '$repository', provider: '$findingsData.provider' },
-        high:       { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'HIGH'] }, 1, 0] }},
-        medium:     { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'MEDIUM'] }, 1, 0] }},
-        low:        { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'LOW'] }, 1, 0] }},
-        critical:   { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'CRITICAL'] }, 1, 0] }},
-        negligible: { $sum: { $cond: [{ $eq: ['$findingsData.severity', 'NEGLIGIBLE'] }, 1, 0] }}
-      }},
-      { $group: {
-        _id: '$_id.repository',
-        providers: { $push: { name: '$_id.provider', high: '$high', medium: '$medium', low: '$low', critical: '$critical', negligible: '$negligible' } }
-      }},
-      { $project: {
-        _id: 0,
-        repository: '$_id',
-        providers: '$providers'
-      }}
-    ];
-    models.branch.aggregate(pipeline).then(docs => {
-      if (docs[0]?.providers?.[0]?.name) {
-        resolve(docs[0]);
-      } else {
-        resolve(null);
+    models.repository.findOne({ _id: repositoryId }).then(repository => {
+      if (!repository) {
+        return resolve();
       }
+
+      if (!branchId) {
+        let protectedBranches = repository.branches?.filter(
+          b => (b.ref.includes('main') || b.ref.includes('master')));
+        if (protectedBranches?.length) {
+          branchId = protectedBranches[0]._id;
+        }
+      }
+
+      const pipeline = [
+        { $match: { branchId: new ObjectId(branchId) } },
+        { $group: {
+          _id:        '$provider',
+          high:       { $sum: { $cond: [{ $eq: ['$severity', 'HIGH'] }, 1, 0] }},
+          medium:     { $sum: { $cond: [{ $eq: ['$severity', 'MEDIUM'] }, 1, 0] }},
+          low:        { $sum: { $cond: [{ $eq: ['$severity', 'LOW'] }, 1, 0] }},
+          critical:   { $sum: { $cond: [{ $eq: ['$severity', 'CRITICAL'] }, 1, 0] }},
+          negligible: { $sum: { $cond: [{ $eq: ['$severity', 'NEGLIGIBLE'] }, 1, 0] }}
+        }},
+        { $project: {
+          name: '$_id',
+          high: 1,
+          mediun: 1,
+          low: 1,
+          critical: 1,
+          negligible: 1,
+          _id: 0
+        }}
+      ];
+      models.findings.aggregate(pipeline).then(docs => {
+        if (docs.length) {
+          resolve(docs);
+        } else {
+          resolve(null);
+        }
+      }).catch(error => {
+        reject(error);
+      });
+
     }).catch(error => {
       reject(error);
-    })
+    });
+    
   });
 }
 
 function repositories(name, skip) {
   return new Promise((resolve, reject) => {
-    let filter = !name
-      ? null
-      : {
-          repository: {
-            $regex: name,
-            $options: "i",
-          },
-        };
 
-    const pipeline = filter ? [{ $match: filter }] : [];
-    pipeline.push(
-      {
-        $sort: { updatedAt: -1 }
-      },
-      { $group: {
-        _id: '$repository',
-        updatedAt: { $first: '$updatedAt' }
-      }},
-      { $project: {
-        _id: 0,
-        repository: '$_id',
-        updatedAt: 1
-      }},
-      { $sort: { repository: 1 } },
-      { $skip: skip || 0 },
-      { $limit: 20 }
-    );
-
-    // You may modify the total pipeline as needed
-    const pipelineTotal = filter ? [{ $match: filter }] : [];
-    pipelineTotal.push(
-      { $group: {
-        _id: '$repository',
-        updatedAt: { $first: '$updatedAt' }
-      }},
-      { $project: {
-        _id: 0,
-        repository: '$_id',
-        updatedAt: 1
-      }});
-    
+    const filter = name ? { name }: {};
 
     Promise.all([
-      models.branch.aggregate(pipeline),
-      models.branch.aggregate(pipelineTotal),
+      models.repository.find(filter).skip(skip).limit(20),
+      models.repository.find(filter),
     ])
       .then((values) => {
         resolve({
@@ -114,22 +76,26 @@ function repositories(name, skip) {
   });
 }
 
-function branches(repository, ref, skip) {
+function branches(repositoryId, ref, skip) {
   return new Promise((resolve, reject) => {
+    var pipeline = [
+      { $match: { _id: new ObjectId(repositoryId) } },
+      { $unwind: "$branches" },
+      { $replaceRoot: { newRoot: "$branches" } },
+    ];
 
-    var filter = !ref.length ? 
-      { repository } : 
-      {
-        repository,
+    if (ref?.length) {
+      pipeline.push({ $match: {
         ref: {
           $regex: ref,
           $options: "i",
         }
-      };
+      }});
+    }
 
     Promise.all([
-      models.branch.find(filter).skip(skip||0).limit(20),
-      models.branch.find(filter),
+      models.repository.aggregate(pipeline.concat({ $sort: { name: 1 } }, { $skip: skip }, { $limit: 20 })),
+      models.repository.aggregate(pipeline),
     ])
       .then((values) => {
         resolve({
@@ -145,31 +111,30 @@ function branches(repository, ref, skip) {
 
 function upsert(repository, ref, findings) {
   return new Promise((resolve, reject) => {
-    models.branch.findOne({ repository, ref }).then(async (doc) => {
-
-      if (doc) {
-        console.log('Deleting current branch scan')
-        await models.branch.deleteOne({ _id: doc._id });
-        await models.findings.deleteMany({ branchId: doc._id });
+    addRepository(repository).then(async (repository) => {
+      // Find branch Id
+      let branchId = repository.branches.filter(b => b.ref === ref)?.[0]?._id;
+      if (!branchId) {
+        try {
+          branchId = await addBranch(repository._id, ref);
+        } catch (error) {
+          return reject(error);
+        }
+      }
+      try {
+        await models.findings.deleteMany({ branchId });
+        await models.findings.insertMany(findings.map(f => {
+          f.branchId = branchId;
+          return f;
+        }));
+        resolve(branchId);
+      } catch(error) {
+        reject(error);
       }
 
-      let branch = new models.branch({
-        repository,
-        ref
-      });
-
-      branch.save()
-        .then(async (doc) => {
-          await models.findings.insertMany(findings.map(f => {
-            f.branchId = doc._id;
-            return f;
-          }));
-          resolve(doc._id);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+    }).catch(error => {
+      reject(error);
+    })
   });
 }
 
@@ -188,8 +153,6 @@ function findings(
     if (ruleIds.length) matchConditions["ruleId"] = { $in: ruleIds };
     if (severities.length) matchConditions["severity"] = { $in: severities };
     if (files.length) matchConditions["file"] = { $in: files };
-
-    console.log(matchConditions);
 
     let aggregationFindings = [
       { $match: { branchId: new ObjectId(branchId) } },
@@ -291,6 +254,43 @@ function removeBranch(branchId) {
       .catch((error) => {
         reject(error);
       });
+  });
+}
+
+function addRepository(name) {
+  return new Promise((resolve, reject) => {
+    models.repository.findOne({ name }).then(doc => {
+      if (doc) {
+        resolve(doc);
+      } else {
+        let repository = new models.repository({ name });
+        repository.save().then((doc) => {
+          resolve(doc);
+        }).catch(error => {
+          reject(error);
+        })
+      }
+    }).catch(error => {
+      reject(error);
+    })
+  })
+}
+
+function addBranch(repositoryId, ref) {
+  return new Promise((resolve, reject) => {
+    let branch = { ref, _id: new ObjectId() };
+    models.repository.updateOne(
+      { _id: repositoryId }, 
+      { $addToSet: { branches: branch}}
+    ).then((result) => {
+      if (result.modifiedCount) {
+        resolve(branch._id);
+      } else {
+        reject();
+      }
+    }).catch(error => {
+      reject(error);
+    })
   });
 }
 

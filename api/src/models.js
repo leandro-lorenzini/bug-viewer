@@ -22,8 +22,15 @@ const finding = new mongoose.Schema({
 
 const branch = new mongoose.Schema(
   {
-    repository: { type: String, required: true },
     ref: { type: String, required: true }
+  },
+  { timestamps: true }
+);
+
+const repository = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    branches: [branch]
   },
   { timestamps: true }
 );
@@ -108,7 +115,7 @@ const stats = new mongoose.Schema({
 );
 
 module.exports = {
-  branch: mongoose.model("Branch", branch),
+  repository: mongoose.model("Repositories", repository),
   findings: mongoose.model("Findings", finding),
   user: mongoose.model("User", user),
   settings: mongoose.model("Settings", settings),
