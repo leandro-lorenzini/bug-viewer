@@ -113,10 +113,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
             .status(207)
             .send(
               "Scan results have been saved, one or more serious bug has been found! " +
-              `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?
-              ref=${value.ref.replace(/\//g, "%2F")}&
-              repository=${upsertResult.repository._id}&
-              repositoryName=${upsertResult.repository.name} for details.`
+              `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?ref=${value.ref.replace(/\//g, "%2F")}&repository=${upsertResult.repository._id}&repositoryName=${upsertResult.repository.name} for details.`
             );
         }
       }
