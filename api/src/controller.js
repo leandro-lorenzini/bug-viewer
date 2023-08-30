@@ -26,7 +26,8 @@ function branchStats (repositoryId, branchId) {
           medium:     { $sum: { $cond: [{ $eq: ['$severity', 'MEDIUM'] }, 1, 0] }},
           low:        { $sum: { $cond: [{ $eq: ['$severity', 'LOW'] }, 1, 0] }},
           critical:   { $sum: { $cond: [{ $eq: ['$severity', 'CRITICAL'] }, 1, 0] }},
-          negligible: { $sum: { $cond: [{ $eq: ['$severity', 'NEGLIGIBLE'] }, 1, 0] }}
+          negligible: { $sum: { $cond: [{ $eq: ['$severity', 'NEGLIGIBLE'] }, 1, 0] }},
+          updatedAt:  { $first: '$updatedAt' }
         }},
         { $project: {
           name: '$_id',
@@ -35,6 +36,7 @@ function branchStats (repositoryId, branchId) {
           low: 1,
           critical: 1,
           negligible: 1,
+          updatedAt: 1,
           _id: 0
         }}
       ];

@@ -123,7 +123,7 @@ function Users() {
             title: 'Username', dataIndex: 'email', key: 'email', width: '50%'
           },
           {
-            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%'
+            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
             title: 'Actions', key: 'Actions', render: (_, record) => (

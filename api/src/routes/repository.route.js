@@ -152,7 +152,8 @@ Router.get("/", authenticated, (req, res) => {
           return {
             _id: r._id,
             name: r.name,
-            providers: values[index]
+            providers: values[index],
+            updatedAt: values[index]?.[0].updatedAt
           };
         });
 
@@ -206,7 +207,12 @@ Router.get("/branch", authenticated, (req, res) => {
 
       Promise.all(promises).then(values => {
         let promises = result.branches.map((b, index) => {
-          return {_id: b._id, ref: b.ref, updatedAt: b.updatedAt, providers: values[index]};
+          return {
+            _id: b._id, 
+            ref: b.ref, 
+            updatedAt: values[index]?.[0].updatedAt,
+            providers: values[index]
+          };
         });
 
         Promise.all(promises).then(values => {

@@ -193,7 +193,7 @@ function Branches() {
             }})
           },
           {
-            title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', render: (updatedAt) => (new Date(updatedAt).toLocaleString())
+            title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
             title: 'Actions', key: 'Actions', width: '10%',  render: (_, record) => (

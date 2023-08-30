@@ -122,13 +122,13 @@ function Parser() {
             title: 'Parser name', dataIndex: 'name', key: 'name', width: '20%'
           },
           {
-            title: 'Description', dataIndex: 'description', key: 'description', width: '55%'
+            title: 'Description', dataIndex: 'description', key: 'description'
           },
           {
-            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '15%'
+            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
-            title: 'Actions', key: 'Actions', render: (_, record) => (
+            title: 'Actions', key: 'Actions', width: '10%', render: (_, record) => (
               <Space>
                 <Popconfirm
                     title="Remove parser"

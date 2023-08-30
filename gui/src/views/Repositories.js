@@ -165,10 +165,10 @@ function Repositories() {
             }})
           },
           {
-            title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', width: '15%', render: (updatedAt) => (new Date(updatedAt).toLocaleString())
+            title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
-            title: '', key: 'Actions', fixed: 'right', render: (_, record) => (
+            title: '', key: 'Actions', width: '10%', fixed: 'right', render: (_, record) => (
               <Space>
                 <Button type="link" icon={<BranchesOutlined/>} onClick={() => {
                       navigate({ pathname: 'branch', search: `?${queryString.stringify({ repository: record._id, repositoryName: record.name })}` });

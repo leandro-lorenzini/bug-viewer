@@ -18,7 +18,8 @@ const finding = new mongoose.Schema({
   resolution: { type: String },
   details: { type: String },
   cve: { type: String },
-});
+},
+{ timestamps: true });
 
 const branch = new mongoose.Schema(
   {

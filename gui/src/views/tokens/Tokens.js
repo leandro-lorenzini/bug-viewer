@@ -123,7 +123,7 @@ function Tokens() {
             title: 'Token description', dataIndex: 'description', key: 'description', width: '50%'
           },
           {
-            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%'
+            title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', width: '50%', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
             title: 'Actions', key: 'Actions', render: (_, record) => (
