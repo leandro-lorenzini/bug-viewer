@@ -85,14 +85,22 @@ function repositories(name, skip) {
     );
 
     // You may modify the total pipeline as needed
-    const pipelineTotal = filter ? { repository: {
-        $regex: name,
-        $options: "i",
-      }}:{};
+    const pipelineTotal = filter ? [{ $match: filter }] : [];
+    pipelineTotal.push(
+      { $group: {
+        _id: '$repository',
+        updatedAt: { $first: '$updatedAt' }
+      }},
+      { $project: {
+        _id: 0,
+        repository: '$_id',
+        updatedAt: 1
+      }});
+    
 
     Promise.all([
       models.branch.aggregate(pipeline),
-      models.branch.find(pipelineTotal),
+      models.branch.aggregate(pipelineTotal),
     ])
       .then((values) => {
         resolve({
