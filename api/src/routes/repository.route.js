@@ -146,7 +146,7 @@ Router.get("/", authenticated, (req, res) => {
     .then((result) => {
       // Get stats
       let promises = result.repositories.map(r => {
-        return controller.mainBranch(r._id);
+        return controller.branchStats(r._id);
       })
 
       Promise.all(promises).then(values => {
@@ -204,7 +204,7 @@ Router.get("/branch", authenticated, (req, res) => {
     .then((result) => {
       // Get stats
       let promises = result.branches.map(b => {
-        return controller.mainBranch(value.repository, b._id);
+        return controller.branchStats(value.repository, b._id);
       })
 
       Promise.all(promises).then(values => {

@@ -2,7 +2,7 @@ const models = require("./models");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-function mainBranch (repositoryId, branchId) {
+function branchStats (repositoryId, branchId) {
   return new Promise((resolve, reject) => {
 
     models.repository.findOne({ _id: repositoryId }).then(repository => {
@@ -31,7 +31,7 @@ function mainBranch (repositoryId, branchId) {
         { $project: {
           name: '$_id',
           high: 1,
-          mediun: 1,
+          medium: 1,
           low: 1,
           critical: 1,
           negligible: 1,
@@ -301,5 +301,5 @@ module.exports = {
   branches,
   removeRepository,
   removeBranch,
-  mainBranch
+  branchStats
 };
