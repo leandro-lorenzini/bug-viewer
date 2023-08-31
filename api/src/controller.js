@@ -12,7 +12,9 @@ function branchStats (repositoryId, branchId) {
 
       if (!branchId) {
         let protectedBranches = repository.branches?.filter(
-          b => (b.ref.includes('main') || b.ref.includes('master')));
+          b => (
+            ["main", "master"].includes(b.ref) || b.ref.includes('/main') || b.ref.includes('/master'))
+          );
         if (protectedBranches?.length) {
           branchId = protectedBranches[0]._id;
         }
@@ -40,6 +42,7 @@ function branchStats (repositoryId, branchId) {
           _id: 0
         }}
       ];
+
       models.findings.aggregate(pipeline).then(docs => {
         if (docs.length) {
           resolve(docs);
