@@ -25,16 +25,19 @@ http {
 
 
         location / {
+            add_header X-Robots-Tag noindex;
             root /usr/share/nginx/html;
             try_files $uri /index.html;
         }
 
         location /scanner/ {
+            add_header X-Robots-Tag noindex;
             root /usr/share/nginx/html/scanner;
             try_files $uri $uri/ =404;
         }
 
         location /api/ {
+            add_header X-Robots-Tag noindex;
             proxy_pass http://api:3000/;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
