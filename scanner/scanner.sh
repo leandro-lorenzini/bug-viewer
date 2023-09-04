@@ -11,7 +11,11 @@ cd ..
 directory="scanner/tmp/result/"
 mkdir -p "$directory"
 
-# Full check is generally used when running periodic scans on the main/master branch.
+# Even though the server has the option to ignore findings on non-changed files
+# it's still a good idea to only scan mofied files for performance and cost
+# saving reasons.
+# We tipically only run full scans for periodic scanning under the main/master brwnch.
+
 if [ "$FULL_CHECK" = true ]; then
     # Check which scanners we should run according to the project files.
     tf=$(find . -name '*.tf' -type f -print -quit | grep -q . && echo true || echo false)
@@ -24,7 +28,6 @@ else
     # (Non) full checks are generally used during pull requests
     echo "Files modified in this branch:"
     git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH)
-
     # Check which scanners we should run according to the changed files.
     tf=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.tf$' | grep -q '^0$' || echo true)
     k8=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | egrep -c 'deployment.yaml$|deployment.yml$|deploy.yaml$|deploy.yml$|kustomization.yaml$|kustomization.yml$' | grep -q '^0$' || echo true)
@@ -32,7 +35,6 @@ else
     py=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.py$' | grep -q '^0$' || echo true)
     go=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.go$' | grep -q '^0$' || echo true)
     docker=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | egrep -c 'Dockerfile$|docker-compose.yaml$|docker-compose.yml$$' | grep -q '^0$' || echo true)
-
     export MODIFIED_FILES=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH))
 fi
 
