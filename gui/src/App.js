@@ -23,10 +23,12 @@ import ChangePassword from "./views/ChangePassword";
 import Parser from "./views/parsers/Parsers";
 
 function App() {
-  const { Sider } = Layout;
+  const { Sider, Footer } = Layout;
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(true);
   const [collapsed, setCollapsed] = useState(true);
+
+  const [version, setVersion] = useState("");
 
   const [showChangePassword, setShowChangePassword] = useState(false);
 
@@ -57,6 +59,16 @@ function App() {
       .finally(() => {
         setLoading(false);
       });
+
+      axios
+      .get("/api/settings/version")
+      .then((response) => {
+        setVersion(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
   }, []);
 
   if (loading) {
@@ -69,7 +81,7 @@ function App() {
 
   return (
     <ConfigProvider>
-      <Layout style={{ height: "100vh" }} hasSider>
+      <Layout style={{ height: "100%" }} hasSider>
         <Sider
           collapsible
           collapsed={collapsed}
@@ -167,7 +179,7 @@ function App() {
             ].filter((i) => user.admin || !i.admin)}
           />
         </Sider>
-        <Layout style={{ marginLeft: !collapsed ? 200 : 90 }}>
+        <Layout style={{ height: "100%", marginLeft: !collapsed ? 200 : 90 }}>
           <Content style={{ paddingRight: 10, paddingLeft: 10 }}>
             <Routes>
               <Route
@@ -195,6 +207,10 @@ function App() {
               <Route path="*" element={<Navigate to="/repository" />} />
             </Routes>
           </Content>
+          <Footer style={{ textAlign: 'center', color: '#7f7b7b' }}>
+            <a href="https://github.com/leandro-lorenzini/bug-viewer" target="_blank">BugViewer</a><br />
+            API: v{version} | GUI: v{process.env.REACT_APP_VERSION}
+          </Footer>
         </Layout>
       </Layout>
       {contextHolder}

@@ -2,8 +2,14 @@ const express = require("express");
 const Joi = require("joi");
 const settingsController = require("../controllers/settings.controller");
 const admin = require("../helper/admin.helper");
+const authenticated = require("../helper/authenticated.helper");
+var pjson = require('../../package.json');
 
 const Router = express.Router();
+
+Router.get("/version", authenticated, (req, res) => {
+  res.send(pjson.version);
+});
 
 // Get settings
 Router.get("/", admin, async (req, res) => {
