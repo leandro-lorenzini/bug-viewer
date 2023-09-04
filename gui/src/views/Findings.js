@@ -311,7 +311,7 @@ function Findings() {
 
                                   {finding.ruleId ? (
                                     <div>
-                                      <span>
+                                      <span style={{ wordWrap: 'break-word' }}>
                                         <BugOutlined /> Rule: {finding.ruleId}
                                       </span>
                                     </div>
