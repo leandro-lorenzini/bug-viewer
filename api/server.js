@@ -4,6 +4,11 @@ const cors = require("cors");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const settings = require("./src/controllers/settings.controller");
+var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var path = require('path');
+
 
 const app = express();
 
@@ -32,12 +37,18 @@ app.use(
     }),
   })
 );
-app.use("/repository", require("./src/routes/repository.route"));
-app.use("/auth", require("./src/routes/auth.route"));
-app.use("/user", require("./src/routes/user.route"));
-app.use("/token", require("./src/routes/token.route"));
-app.use("/settings", require("./src/routes/settings.route"));
-app.use("/parser", require("./src/routes/parser.route"));
+app.use("/api/repository", require("./src/routes/repository.route"));
+app.use("/api/auth", require("./src/routes/auth.route"));
+app.use("/api/user", require("./src/routes/user.route"));
+app.use("/api/token", require("./src/routes/token.route"));
+app.use("/api/settings", require("./src/routes/settings.route"));
+app.use("/api/parser", require("./src/routes/parser.route"));
+
+app.use(express.static(path.resolve(__dirname, 'ui')));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'ui', 'index.html'));
+});
+
 
 // Connect to the database
 mongoose
@@ -46,9 +57,14 @@ mongoose
     settings
       .setup()
       .then(() => {
-        app.listen(3000, () => {
-          console.log("API is running");
-        });
+        if (process.env.SSL) {
+          var privateKey  = fs.readFileSync('certificate.key', 'utf8');
+          var certificate = fs.readFileSync('certificate.crt', 'utf8');
+          var httpsServer = https.createServer({ key: privateKey, cert: certificate }, app);
+          httpsServer.listen(4443);
+        }
+        var httpServer = http.createServer(app);
+        httpServer.listen(8080);
       })
       .catch((error) => {
         console.log(error);

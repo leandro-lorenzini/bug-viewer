@@ -1,4 +1,4 @@
-FROM node:20.5.1 as build
+FROM node:20.5.1 as build-gui
 WORKDIR /usr/src/app
 COPY ./gui/package*.json ./
 RUN npm install
@@ -8,9 +8,24 @@ RUN mkdir scanner
 COPY ./scanner ./scanner
 RUN tar -czf scanner.tar.gz scanner
 
-FROM nginxinc/nginx-unprivileged:alpine-slim
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
-COPY --from=build /usr/src/app/scanner.tar.gz /usr/share/nginx/html/scanner.tar.gz
-EXPOSE 443 80
-USER nginx
-CMD /bin/sh -c "envsubst '\$SERVER_NAME' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
+##########
+
+FROM node:20 AS build-api
+WORKDIR /usr/src/app
+
+COPY ./api/package*.json ./
+RUN npm install
+
+COPY --from=build-gui /usr/src/app/build ./ui
+COPY --from=build-gui /usr/src/app/scanner.tar.gz ./ui/scanner/scanner.tar.gz
+COPY ./api .
+
+##########
+
+FROM gcr.io/distroless/nodejs20-debian11
+COPY --from=build-api /usr/src/app /usr/src/app
+
+
+WORKDIR /usr/src/app
+USER 1000
+CMD ["server.js"]
