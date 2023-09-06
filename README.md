@@ -11,17 +11,17 @@ Start by Cloning the project
 ```
 git clone https://github.com/leandro-lorenzini/bug-viewer.git
 ```
-Generate a self-signed certificate inside the project folder in case you don't have a valid ssl certificate yet.
+Generate a self-signed certificate inside the api folder in case you don't have a valid ssl certificate yet but wish to run the project with SSL without using a proxy.
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certificate.key -out certificate.crt
 ```
 Set the required environment variables in `docker-compose.yml`
-|Variable           |Default Value                    |Required   |Description                                                    |
-|-------------------|---------------------------------|----------|----------------------------------------------------------------|
-|api.SESSION_SECRET |                                 |Yes       |A ramdom and complex value to be used by express-session        |
-|nginx.SERVER_NAME  |                                 |Yes       |The server's fqdn or IP address, eg: bugviewer.domain.com       |
-|nginx.ORIGIN       |                                 |Yes       |The server's fqdn or IP address, eg: https:bugviewer.domain.com |
-|api.MONGO_URI      |mongodb://mongo:27017/bug-viewer |No        |Set this variable if you want to use a different mongodb server |
+|Variable           |Default Value                    |Required   |Description                                                      |
+|-------------------|---------------------------------|----------|------------------------------------------------------------------|
+|api.SESSION_SECRET |                                 |Yes       |A ramdom and complex value to be used by express-session          |
+|api.ORIGIN         |                                 |Yes       |The server's fqdn or IP address, eg: https://bugviewer.domain.com |
+|api.SSL            |                                 |No        |If the application should be served with HTTPS, without a proxy   |
+|api.MONGO_URI      |mongodb://mongo:27017/bug-viewer |No        |Set this variable if you want to use a different mongodb server   |
 
 Spin the containers
 ```
@@ -44,7 +44,7 @@ Both examples (github and gitlab) can be used to guide you on how to set up the 
 If you want to implement the scanners youselft, a sample of how scan results should be sent to the server can be found [here](scanner/submit.sh). The ```JSON parser``` is selected according to the uploaded file(s) name, make sure to include ```__ParserName__``` in the filename. Parsers can be viewd in https://<SERVER_NAME>/parser. You can use one of the existing parsers or create your own. ```JSON Parser``` is the congiguration that tells the tool how to map the results from the different scanners to the fields that you can see on the web interface.
 
 ```
-curl --location 'https://SERVER_NAME/repository' \
+curl --location 'https://SERVER_NAME/api/repository' \
 --form 'name="RepositoryName"' \
 --form 'ref="Branchref or Pull Request ref"' \
 --form 'token="Token created using the UI or API"' \
