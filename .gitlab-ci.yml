@@ -8,7 +8,7 @@ scan_job:
   stage: scan
   script:
     - apk add --update bash curl nodejs npm libc-dev gcc python3-dev py-pip
-    - curl -k -O $BUGVIEWER_SERVER/scanner.tar.gz
+    - curl -k -O $BUGVIEWER_SERVER/scanner/scanner.tar.gz
     - tar -xf scanner.tar.gz
     - cd scanner && bash scanner.sh
   artifacts:
