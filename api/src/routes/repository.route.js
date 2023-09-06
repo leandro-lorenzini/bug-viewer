@@ -318,8 +318,9 @@ Router.delete("/", authenticated, (req, res) => {
     });
 });
 
-Router.delete("/branch/:branchId", authenticated, (req, res) => {
+Router.delete("/:repositoryId/branch/:branchId", authenticated, (req, res) => {
   const { error, value } = Joi.object({
+    repositoryId: Joi.string().required(),
     branchId: Joi.string().required(),
   }).validate(req.params);
 
@@ -327,7 +328,7 @@ Router.delete("/branch/:branchId", authenticated, (req, res) => {
     return res.status(400).json(error.details);
   }
   controller
-    .removeBranch(value.branchId)
+    .removeBranch(value.repositoryId, value.branchId)
     .then(() => {
       res.send();
     })
