@@ -6,7 +6,7 @@ COPY ./gui .
 RUN npm run build
 RUN mkdir scanner
 COPY ./scanner ./scanner
-RUN tar -czf scanner.tar.gz scanner
+RUN tar -czf build/scanner.tar.gz scanner
 
 ##########
 
@@ -17,7 +17,6 @@ COPY ./api/package*.json ./
 RUN npm install
 
 COPY --from=build-gui /usr/src/app/build ./ui
-COPY --from=build-gui /usr/src/app/scanner.tar.gz ./ui/scanner/scanner.tar.gz
 COPY ./api .
 
 ##########
