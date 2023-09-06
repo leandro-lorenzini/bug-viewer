@@ -9,7 +9,7 @@ const app = express();
 
 app.use(express.json()); // This is to parse JSON data if needed elsewhere in your app
 app.use(express.urlencoded({ extended: true })); // This is to parse application/x-www-form-urlencoded
-app.use(cors({ origin: "http://localhost:3001", credentials: true }));
+app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 
 // Session settings
 app.use(

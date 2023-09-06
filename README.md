@@ -16,11 +16,12 @@ Generate a self-signed certificate inside the project folder in case you don't h
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certificate.key -out certificate.crt
 ```
 Set the required environment variables in `docker-compose.yml`
-|Variable           |Default Value                    |Required   |Description                                                   |
-|-------------------|---------------------------------|----------|---------------------------------------------------------------|
-|api.SESSION_SECRET |                                 |Yes       |A ramdom and complex value to be used by express-session       |
-|nginx.SERVER_NAME  |                                 |Yes       |The server's fqdn or IP address, eg: bugviewer.domain.com      |
-|api.MONGO_URI      |mongodb://mongo:27017/bug-viewer |No        |Set this variable if you want to use a different mongodb server|
+|Variable           |Default Value                    |Required   |Description                                                    |
+|-------------------|---------------------------------|----------|----------------------------------------------------------------|
+|api.SESSION_SECRET |                                 |Yes       |A ramdom and complex value to be used by express-session        |
+|nginx.SERVER_NAME  |                                 |Yes       |The server's fqdn or IP address, eg: bugviewer.domain.com       |
+|nginx.ORIGIN       |                                 |Yes       |The server's fqdn or IP address, eg: https:bugviewer.domain.com |
+|api.MONGO_URI      |mongodb://mongo:27017/bug-viewer |No        |Set this variable if you want to use a different mongodb server |
 
 Spin the containers
 ```
