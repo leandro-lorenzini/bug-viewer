@@ -244,17 +244,13 @@ function removeRepository(repository) {
   });
 }
 
-function removeBranch(branchId) {
+function removeBranch(repositoryId, branchId) {
   return new Promise((resolve, reject) => {
-    models.branch
-      .deleteOne({ _id: branchId })
-      .then(async (result) => {
-        if (result.deletedCount) {
-          await models.findings.deleteMany({ branchId });
-          resolve();
-        } else {
-          reject();
-        }
+    models.repository
+      .updateOne({ _id: repositoryId }, { $pull: { branches: { _id: branchId } } })
+      .then(async () => {
+        models.findings.deleteMany({ branchId });
+        resolve();
       })
       .catch((error) => {
         reject(error);

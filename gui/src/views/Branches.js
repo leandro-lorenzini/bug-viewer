@@ -91,7 +91,7 @@ function Branches() {
 
   function removeBranch(branch) {
     axios
-      .delete("/api/repository/branch/" + branch)
+      .delete(`/api/repository/${searchParams.get('repository')}/branch/${branch}`)
       .then(() => {
         openNotificationWithIcon("success", "Branch has been removed.");
         getResults(ref, 1);
