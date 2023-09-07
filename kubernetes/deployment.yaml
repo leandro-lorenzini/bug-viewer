@@ -15,10 +15,8 @@ spec:
     spec:
       containers:
       - name: server
-        image: leandrolorenzini/bug-viewer:latest
+        image: leandrolorenzini/bug-viewer:debug
         ports:
-        - name: https
-          containerPort: 4443
         - name: http
           containerPort: 8080
         env:
@@ -26,8 +24,6 @@ spec:
           value: "123"
         - name: ORIGIN
           value: "https://localhost"
-        - name: SSL
-          value: "1"
         volumeMounts:
         - name: ssl-certs
           mountPath: "/usr/src/app/cert"
@@ -35,3 +31,18 @@ spec:
       - name: ssl-certs
         secret:
           secretName: bugviewer-ssl-cert
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bugviewer
+spec:
+  type: NodePort
+  selector:
+    app: server
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
