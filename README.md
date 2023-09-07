@@ -38,7 +38,7 @@ Although the main goal of this tool is to aggregate the results of any scanner, 
 
 ### CI/CD Working example
 - Github example [.github/workflows/default.yml](.github/workflows/default.yml)
-- Girlab example  [.gitlab-ci.yml](.gitlab-ci.yml)
+- Gitlab example  [.gitlab-ci.yml](.gitlab-ci.yml)
 
 Both examples (github and gitlab) can be used to guide you on how to set up the scanners in your repository, but if you are not using CI/CD at all, using those files as they are should work for you, just remember to set the variables/secrets ```BUGVIEWER_SERVER``` and ```BUGVIEWER_TOKEN``` in your git repository settings.
 
