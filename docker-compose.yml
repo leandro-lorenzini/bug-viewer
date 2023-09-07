@@ -9,7 +9,6 @@ services:
     environment:
       - SESSION_SECRET=Secret
       - ORIGIN=https://...
-      - SSL=false
     depends_on:
       - mongo
 
