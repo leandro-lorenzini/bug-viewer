@@ -1,0 +1,37 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bugviewer-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: leandrolorenzini/bug-viewer:latest
+        ports:
+        - name: https
+          containerPort: 4443
+        - name: http
+          containerPort: 8080
+        env:
+        - name: SESSION_SECRET
+          value: "123"
+        - name: ORIGIN
+          value: "https://localhost"
+        - name: SSL
+          value: "1"
+        volumeMounts:
+        - name: ssl-certs
+          mountPath: "/usr/src/app/cert"
+      volumes:
+      - name: ssl-certs
+        secret:
+          secretName: bugviewer-ssl-cert

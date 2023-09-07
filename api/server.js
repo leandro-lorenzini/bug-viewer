@@ -58,8 +58,8 @@ mongoose
       .setup()
       .then(() => {
         if (process.env.SSL) {
-          var privateKey  = fs.readFileSync('certificate.key', 'utf8');
-          var certificate = fs.readFileSync('certificate.crt', 'utf8');
+          var privateKey  = fs.readFileSync('./cert/certificate.key', 'utf8');
+          var certificate = fs.readFileSync('./cert/certificate.crt', 'utf8');
           var httpsServer = https.createServer({ key: privateKey, cert: certificate }, app);
           httpsServer.listen(4443);
         }
