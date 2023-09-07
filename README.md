@@ -11,7 +11,7 @@ Start by Cloning the project
 ```
 git clone https://github.com/leandro-lorenzini/bug-viewer.git
 ```
-Generate a self-signed certificate inside the api folder in case you don't have a valid ssl certificate yet but wish to run the project with SSL without using a proxy.
+Generate a self-signed certificate inside the api/cert folder in case you don't have a valid ssl certificate yet but wish to run the project with SSL without using a proxy.
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certificate.key -out certificate.crt
 ```
