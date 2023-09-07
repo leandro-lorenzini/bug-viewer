@@ -20,7 +20,7 @@ Set the required environment variables in `docker-compose.yml`
 |-------------------|---------------------------------|----------|------------------------------------------------------------------|
 |api.SESSION_SECRET |                                 |Yes       |A ramdom and complex value to be used by express-session          |
 |api.ORIGIN         |                                 |Yes       |The server's fqdn or IP address, eg: https://bugviewer.domain.com |
-|api.SSL            |                                 |No        |If the application should be served with HTTPS, without a proxy   |
+|api.SSL            |false                            |No        |If the application should be served with HTTPS, without a proxy   |
 |api.MONGO_URI      |mongodb://mongo:27017/bug-viewer |No        |Set this variable if you want to use a different mongodb server   |
 
 Spin the containers
