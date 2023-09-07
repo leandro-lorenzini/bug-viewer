@@ -24,13 +24,6 @@ spec:
           value: "123"
         - name: ORIGIN
           value: "https://localhost"
-        volumeMounts:
-        - name: ssl-certs
-          mountPath: "/usr/src/app/cert"
-      volumes:
-      - name: ssl-certs
-        secret:
-          secretName: bugviewer-ssl-cert
 
 ---
 apiVersion: v1
