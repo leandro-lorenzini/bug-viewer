@@ -37,6 +37,13 @@ app.use(
     }),
   })
 );
+
+//Cleanup URLs with double slash
+app.use((req, res, next) => {
+  req.url = req.url.replace(/\/+/g, '/');
+  next();
+});
+
 app.use("/api/repository", require("./src/routes/repository.route"));
 app.use("/api/auth", require("./src/routes/auth.route"));
 app.use("/api/user", require("./src/routes/user.route"));
