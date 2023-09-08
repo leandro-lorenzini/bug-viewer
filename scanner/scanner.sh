@@ -27,15 +27,17 @@ if [ "$FULL_CHECK" = true ]; then
 else
     # (Non) full checks are generally used during pull requests
     echo "Files modified in this branch:"
-    git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH)
+    git diff --name-status HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | awk '$1 != "A" { print $2 }'
+    export MODIFIED_FILES=$(git diff --name-status HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | awk '$1 != "A" { print $2 }')
+
     # Check which scanners we should run according to the changed files.
-    tf=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.tf$' | grep -q '^0$' || echo true)
-    k8=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | egrep -c 'deployment.yaml$|deployment.yml$|deploy.yaml$|deploy.yml$|kustomization.yaml$|kustomization.yml$' | grep -q '^0$' || echo true)
-    js=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.\(js\|jsx\)$' | grep -q '^0$' || echo true)
-    py=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.py$' | grep -q '^0$' || echo true)
-    go=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -c '\.go$' | grep -q '^0$' || echo true)
-    docker=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | egrep -c 'Dockerfile$|docker-compose.yaml$|docker-compose.yml$$' | grep -q '^0$' || echo true)
-    export MODIFIED_FILES=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH))
+    tf=$(echo "$MODIFIED_FILES" | grep -c '\.tf$' | grep -q '^0$' || echo true)
+    k8=$(echo "$MODIFIED_FILES" | egrep -c 'deployment.yaml$|deployment.yml$|deploy.yaml$|deploy.yml$|kustomization.yaml$|kustomization.yml$' | grep -q '^0$' || echo true)
+    js=$(echo "$MODIFIED_FILES" | grep -c '\.\(js\|jsx\)$' | grep -q '^0$' || echo true)
+    py=$(echo "$MODIFIED_FILES" | grep -c '\.py$' | grep -q '^0$' || echo true)
+    go=$(echo "$MODIFIED_FILES" | grep -c '\.go$' | grep -q '^0$' || echo true)
+    docker=$(echo "$MODIFIED_FILES" | egrep -c 'Dockerfile$|docker-compose.yaml$|docker-compose.yml$$' | grep -q '^0$' || echo true)
+    
 fi
 
 bash ./scanner/semgrep.sh
