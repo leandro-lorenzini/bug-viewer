@@ -2,7 +2,7 @@ const models = require("./models");
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
 
-function branchStats (repositoryId, branchId) {
+function branchStats(repositoryId, branchId) {
   return new Promise((resolve, reject) => {
 
     models.repository.findOne({ _id: repositoryId }).then(repository => {
@@ -14,7 +14,7 @@ function branchStats (repositoryId, branchId) {
         let protectedBranches = repository.branches?.filter(
           b => (
             ["main", "master"].includes(b.ref) || b.ref.includes('/main') || b.ref.includes('/master'))
-          );
+        );
         if (protectedBranches?.length) {
           branchId = protectedBranches[0]._id;
         }
@@ -22,25 +22,29 @@ function branchStats (repositoryId, branchId) {
 
       const pipeline = [
         { $match: { branchId: new ObjectId(branchId) } },
-        { $group: {
-          _id:        '$provider',
-          high:       { $sum: { $cond: [{ $eq: ['$severity', 'HIGH'] }, 1, 0] }},
-          medium:     { $sum: { $cond: [{ $eq: ['$severity', 'MEDIUM'] }, 1, 0] }},
-          low:        { $sum: { $cond: [{ $eq: ['$severity', 'LOW'] }, 1, 0] }},
-          critical:   { $sum: { $cond: [{ $eq: ['$severity', 'CRITICAL'] }, 1, 0] }},
-          negligible: { $sum: { $cond: [{ $eq: ['$severity', 'NEGLIGIBLE'] }, 1, 0] }},
-          updatedAt:  { $first: '$updatedAt' }
-        }},
-        { $project: {
-          name: '$_id',
-          high: 1,
-          medium: 1,
-          low: 1,
-          critical: 1,
-          negligible: 1,
-          updatedAt: 1,
-          _id: 0
-        }}
+        {
+          $group: {
+            _id: '$provider',
+            high: { $sum: { $cond: [{ $eq: ['$severity', 'HIGH'] }, 1, 0] } },
+            medium: { $sum: { $cond: [{ $eq: ['$severity', 'MEDIUM'] }, 1, 0] } },
+            low: { $sum: { $cond: [{ $eq: ['$severity', 'LOW'] }, 1, 0] } },
+            critical: { $sum: { $cond: [{ $eq: ['$severity', 'CRITICAL'] }, 1, 0] } },
+            negligible: { $sum: { $cond: [{ $eq: ['$severity', 'NEGLIGIBLE'] }, 1, 0] } },
+            updatedAt: { $first: '$updatedAt' }
+          }
+        },
+        {
+          $project: {
+            name: '$_id',
+            high: 1,
+            medium: 1,
+            low: 1,
+            critical: 1,
+            negligible: 1,
+            updatedAt: 1,
+            _id: 0
+          }
+        }
       ];
 
       models.findings.aggregate(pipeline).then(docs => {
@@ -56,14 +60,19 @@ function branchStats (repositoryId, branchId) {
     }).catch(error => {
       reject(error);
     });
-    
+
   });
 }
 
 function repositories(name, skip) {
   return new Promise((resolve, reject) => {
 
-    const filter = name ? { name }: {};
+    const filter = name ? {
+      name: {
+        $regex: name,
+        $options: "i",
+      }
+    } : {};
 
     Promise.all([
       models.repository.find(filter).skip(skip).limit(20),
@@ -90,12 +99,14 @@ function branches(repositoryId, ref, skip) {
     ];
 
     if (ref?.length) {
-      pipeline.push({ $match: {
-        ref: {
-          $regex: ref,
-          $options: "i",
+      pipeline.push({
+        $match: {
+          ref: {
+            $regex: ref,
+            $options: "i",
+          }
         }
-      }});
+      });
     }
 
     Promise.all([
@@ -132,8 +143,8 @@ function upsert(repository, ref, findings) {
           f.branchId = branchId;
           return f;
         }));
-        resolve({repository, branchId: branchId });
-      } catch(error) {
+        resolve({ repository, branchId: branchId });
+      } catch (error) {
         reject(error);
       }
 
@@ -281,8 +292,8 @@ function addBranch(repositoryId, ref) {
   return new Promise((resolve, reject) => {
     let branch = { ref, _id: new ObjectId() };
     models.repository.updateOne(
-      { _id: repositoryId }, 
-      { $addToSet: { branches: branch}}
+      { _id: repositoryId },
+      { $addToSet: { branches: branch } }
     ).then((result) => {
       if (result.modifiedCount) {
         resolve(branch._id);
