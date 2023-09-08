@@ -44,7 +44,7 @@ find . -type f -name "package.json" -not -path '*/node_modules/*' -exec dirname 
     fi
   else
     # Only scan files modified in this branch.
-    modified_files=$(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep -E '\.(js|jsx|ts)$')
+    modified_files=$(echo "$MODIFIED_FILES" | grep -E '\.(js|jsx|ts)$')
     echo "Modified files: $modified_files"
 
     # Check if any modified file is under the current directory

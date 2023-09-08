@@ -10,5 +10,5 @@ if [ "$FULL_CHECK" = true ]; then
     bandit -r . -f json -o ./scanner/tmp/result/__bandit__.json
 else
     # Run scanner on changed files only
-    bandit -r $(git diff --name-only HEAD $(git merge-base HEAD remotes/origin/$BRANCH) | grep '\.py$') -f json -o ./scanner/tmp/result/__bandit__.json
+    bandit -r $(echo "$MODIFIED_FILES" | grep '\.py$') -f json -o ./scanner/tmp/result/__bandit__.json
 fi

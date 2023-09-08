@@ -17,7 +17,7 @@ for file do
     DIR=$(dirname "$file")
     file=$(echo "$file" | sed "s/^\.\///g")
     TAG_NAME=$(echo "$file" | sed "s/^\.\///g" | sed "s/\//__SLASH__/g" | tr '[:upper:]' '[:lower:]')
-    if [ "$FULL_CHECK" = true ] || git diff --name-only HEAD $(git merge-base HEAD remotes/origin/"$BRANCH") | grep -E "Dockerfile$" | grep -Fxq "$file"; then
+    if [ "$FULL_CHECK" = true ] || echo "$MODIFIED_FILES" | grep -E "Dockerfile$" | grep -Fxq "$file"; then
         echo "Building Docker image in directory: $DIR"
         docker build -t "$TAG_NAME" "$DIR"
     fi
