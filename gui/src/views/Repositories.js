@@ -7,7 +7,11 @@ import {
   Table,
   Space,
   Button,
-  Tooltip
+  Tooltip,
+  Switch,
+  Col,
+  Row,
+  Tag
 } from "antd";
 import {
   BranchesOutlined,
@@ -28,6 +32,8 @@ function Repositories() {
 
   const [parsers, setParsers] = useState([]);
   const [providers, setProviders] = useState([]);
+
+  const [detailed, setDetailed] = useState(false);
 
   const navigate = useNavigate();
 
@@ -74,35 +80,24 @@ function Repositories() {
   }
 
   const getSeverity = (severity, number) => {
-    
     const levels = {
       CRITICAL: (
-        <div style={{ color: "red" }}>
-          <ExclamationCircleOutlined /> { number } critical
-        </div>
+        <Tag color="#9f2017">{ number } C</Tag>
       ),
       HIGH: (
-        <div style={{ color: "brown" }}>
-          <ExclamationCircleOutlined /> { number } High
-        </div>
+        <Tag color="#FF3200">{ number } H</Tag>
       ),
       MEDIUM: (
-        <div style={{ color: "orange" }}>
-          <ExclamationCircleOutlined /> { number } Medium
-        </div>
+        <Tag color="#FFA500">{ number } M</Tag>
       ),
       LOW: (
-        <div style={{ color: "black" }}>
-          <ExclamationCircleOutlined /> { number } Low
-        </div>
+        <Tag color="#1CA3EC">{ number } L</Tag>
       ),
       NEGLIGIBLE: (
-        <div style={{ color: "grey" }}>
-          <ExclamationCircleOutlined /> { number } Negligibile
-        </div>
+        <Tag color="#999999">{ number } N</Tag>
       ),
     }
-    return number ? levels[severity] : null;
+    return levels[severity];
   };
 
   return (
@@ -124,28 +119,68 @@ function Repositories() {
       />
 
       <Content style={{ backgroundColor: "white", padding: 20 }}>
-        <Input.Search
-          loading={loading}
-          allowClear={true}
-          placeholder="Search"
-          onEmptied={() => {
-            setName("");
-          }}
-          onSearch={(name) => {
-            setName(name);
-          }}
-          style={{
-            width: 305,
-            marginBottom: 10,
-          }}
-        />
+        <Row>
+          <Col span={12}>
+            <Input.Search
+              loading={loading}
+              allowClear={true}
+              placeholder="Search"
+              onEmptied={() => {
+                setName("");
+              }}
+              onSearch={(name) => {
+                setName(name);
+              }}
+              style={{
+                width: 305,
+                marginBottom: 10,
+              }}
+            />
+          </Col>
+          <Col span={12} style={{ textAlign: 'right' }}>
+            <Switch checkedChildren="Detailed view" unCheckedChildren="Detailed view" onChange={(checked) => {
+              setDetailed(checked);
+            }}/>
+          </Col>
+        </Row>
+        
 
-        <Table loading={loading} pagination={false} dataSource={repositories} scroll={{ x: 1600 }} columns={[
+        <Table loading={loading} pagination={false} dataSource={repositories} scroll={ detailed ? { x: providers.length * 500 }: {}} columns={[
           {
             title: 'Repository name', dataIndex: 'name', key: 'name', fixed: 'left'
           },
           {
-            title: 'Findings on main branch',
+            title: 'Findings on main/master', 
+            render: (_, record) => {
+              let critical = 0;
+              let high = 0;
+              let medium = 0;
+              let low = 0;
+              if (record.providers) {
+                for (let provider of record.providers) {
+                  critical += provider.critical;
+                  high += provider.high;
+                  medium += provider.medium;
+                  low += provider.low;
+                }
+              }
+              if (critical + high + medium + low > 0) {
+                return (
+                  <Space>
+                    { getSeverity('CRITICAL', critical)}
+                    { getSeverity('HIGH', high)}
+                    { getSeverity('MEDIUM', medium)}
+                    { getSeverity('LOW', low)}
+                  </Space>
+                );
+              } else {
+                return <>-</>;
+              }
+            
+            }
+          },
+          {
+            title: 'Findings on main/master',
             children: providers.map(provider => { return { 
               title: parsers?.filter(parser =>  parser.name === provider)
                 .map(p => <Tooltip title={p.description}>
@@ -155,12 +190,13 @@ function Repositories() {
                   </span>
                 </Tooltip>) || provider,
               render: (_, record) => {
-                return <>
+                return <Space>
                   { record.providers?.filter(p => p.name === provider)[0] ? <>
                     { getSeverity('CRITICAL', record.providers?.filter(p => p.name === provider)[0]?.critical) }
                     { getSeverity('HIGH', record.providers?.filter(p => p.name === provider)[0]?.high) }
-                    { getSeverity('MEDIUM', record.providers?.filter(p => p.name === provider)[0]?.medium) }</> : <>-</> }
-                </>
+                    { getSeverity('MEDIUM', record.providers?.filter(p => p.name === provider)[0]?.medium) }
+                    { getSeverity('LOW', record.providers?.filter(p => p.name === provider)[0]?.low) }</> : <>-</> }
+                </Space>
               }
             }})
           },
@@ -176,7 +212,12 @@ function Repositories() {
               </Space>
             )
           }
-        ]} />
+        ].filter((col, index) => {
+          if (detailed && index === 1 || !detailed && index === 2) {
+            return false;
+          }
+          return true;
+        })} />
 
         <div style={{ textAlign: "center", marginTop: 10 }}>
           <Pagination

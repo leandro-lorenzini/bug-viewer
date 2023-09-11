@@ -9,7 +9,11 @@ import {
   Table,
   Space,
   Button,
-  Tooltip
+  Tooltip,
+  Tag,
+  Row,
+  Col,
+  Switch
 } from "antd";
 import {
   BugOutlined,
@@ -32,6 +36,8 @@ function Branches() {
 
   const [providers, setProviders] = useState([]);
   const [parsers, setParsers] = useState([]);
+
+  const [detailed, setDetailed] = useState(false);
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -101,35 +107,25 @@ function Branches() {
       });
   }
 
-  const getSeverity = (severity, number) => {  
+  const getSeverity = (severity, number) => {
     const levels = {
       CRITICAL: (
-        <div style={{ color: "red" }}>
-          <ExclamationCircleOutlined /> { number } critical
-        </div>
+        <Tag color="#9f2017">{ number } C</Tag>
       ),
       HIGH: (
-        <div style={{ color: "brown" }}>
-          <ExclamationCircleOutlined /> { number } High
-        </div>
+        <Tag color="#FF3200">{ number } H</Tag>
       ),
       MEDIUM: (
-        <div style={{ color: "orange" }}>
-          <ExclamationCircleOutlined /> { number } Medium
-        </div>
+        <Tag color="#FFA500">{ number } M</Tag>
       ),
       LOW: (
-        <div style={{ color: "black" }}>
-          <ExclamationCircleOutlined /> { number } Low
-        </div>
+        <Tag color="#1CA3EC">{ number } L</Tag>
       ),
       NEGLIGIBLE: (
-        <div style={{ color: "grey" }}>
-          <ExclamationCircleOutlined /> { number } Negligibile
-        </div>
+        <Tag color="#999999">{ number } N</Tag>
       ),
     }
-    return number ? levels[severity] : null;
+    return levels[severity];
   };
 
   return (
@@ -150,25 +146,64 @@ function Branches() {
       />
 
       <Content style={{ padding: 20, backgroundColor: "white" }}>
-        <Input.Search
-          loading={loading}
-          allowClear={true}
-          placeholder="Search"
-          onEmptied={() => {
-            setRef("");
-          }}
-          onSearch={(ref) => {
-            setRef(ref);
-          }}
-          style={{
-            width: 250,
-            marginBottom: 10,
-          }}
-        />
+      <Row>
+          <Col span={12}>
+            <Input.Search
+              loading={loading}
+              allowClear={true}
+              placeholder="Search"
+              onEmptied={() => {
+                setRef("");
+              }}
+              onSearch={(ref) => {
+                setRef(ref);
+              }}
+              style={{
+                width: 250,
+                marginBottom: 10,
+              }}
+            />
+          </Col>
+          <Col span={12} style={{ textAlign: 'right' }}>
+            <Switch checkedChildren="Detailed view" unCheckedChildren="Detailed view" onChange={(checked) => {
+              setDetailed(checked);
+            }}/>
+          </Col>
+        </Row>
 
-        <Table loading={loading} pagination={false} dataSource={branches} columns={[
+        <Table loading={loading} pagination={false} dataSource={branches} scroll={ detailed ? { x: providers.length * 500 }: {}} columns={[
           {
-            title: 'Branch ref', dataIndex: 'ref', key: 'ref', width: '10%'
+            title: 'Branch ref', dataIndex: 'ref', key: 'ref', width: '10%',  fixed: 'left'
+          },
+          {
+            title: 'Findings on main/master', 
+            render: (_, record) => {
+              let critical = 0;
+              let high = 0;
+              let medium = 0;
+              let low = 0;
+              if (record.providers) {
+                for (let provider of record.providers) {
+                  critical += provider.critical;
+                  high += provider.high;
+                  medium += provider.medium;
+                  low += provider.low;
+                }
+              }
+              if (critical + high + medium > 0) {
+                return (
+                  <Space>
+                    { getSeverity('CRITICAL', critical)}
+                    { getSeverity('HIGH', high)}
+                    { getSeverity('MEDIUM', medium)}
+                    { getSeverity('LOW', low)}
+                  </Space>
+                );
+              } else {
+                return <>-</>;
+              }
+            
+            }
           },
           {
             title: 'Findings',
@@ -196,8 +231,8 @@ function Branches() {
             title: 'Last scanned', key: 'lastScan', dataIndex: 'updatedAt', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
           },
           {
-            title: 'Actions', key: 'Actions', width: '10%',  render: (_, record) => (
-              <Space>
+            title: 'Actions', key: 'Actions', width: '10%', fixed: 'right', render: (_, record) => (
+              <Space direction={detailed ? 'vertical':'horizontal'}>
                 <Popconfirm
                     title="Remove branch"
                     description="Are you sure to remove this parser?"
@@ -219,7 +254,12 @@ function Branches() {
               </Space>
             )
           }
-        ]} />
+        ].filter((col, index) => {
+          if (detailed && index === 1 || !detailed && index === 2) {
+            return false;
+          }
+          return true;
+        })} />
 
         <div style={{ textAlign: "center", marginTop: 10 }}>
           <Pagination
