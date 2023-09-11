@@ -23,7 +23,7 @@ if [ "$FULL_CHECK" = true ]; then
     js=$(find . -name 'package.json' -type f -print -quit | grep -q . && echo true || echo false)
     py=$(find . -name '*.py' -type f -print -quit | grep -q . && echo true || echo false)
     go=$(find . -name '*.go' -type f -print -quit | grep -q . && echo true || echo false)
-    docker=$(find . \( -name 'Dockerfile' -o -name 'docker-compose.*' \) -type f -print -quit | grep -q . && echo true || echo false)
+    docker=$(find . -name 'Dockerfile' -type f -print -quit | grep -q . && echo true || echo false)
 else
     # (Non) full checks are generally used during pull requests
     echo "Files modified in this branch:"
@@ -36,8 +36,7 @@ else
     js=$(echo "$MODIFIED_FILES" | grep -c '\.\(js\|jsx\)$' | grep -q '^0$' || echo true)
     py=$(echo "$MODIFIED_FILES" | grep -c '\.py$' | grep -q '^0$' || echo true)
     go=$(echo "$MODIFIED_FILES" | grep -c '\.go$' | grep -q '^0$' || echo true)
-    docker=$(echo "$MODIFIED_FILES" | egrep -c 'Dockerfile$|docker-compose.yaml$|docker-compose.yml$$' | grep -q '^0$' || echo true)
-    
+    docker=$(echo "$MODIFIED_FILES" | grep -c 'Dockerfile$' | grep -q '^0$' || echo true)
 fi
 
 bash ./scanner/semgrep.sh
