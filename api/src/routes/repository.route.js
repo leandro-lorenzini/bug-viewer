@@ -210,6 +210,7 @@ Router.get("/branch", authenticated, (req, res) => {
           return {
             _id: b._id, 
             ref: b.ref, 
+            scans: b.scans,
             updatedAt: values[index]?.[0].updatedAt,
             providers: values[index]
           };
@@ -297,6 +298,14 @@ function normalizeToArray(value) {
   if (value === null || value === undefined || !value.length) return [];
   return [value];
 }
+Router.get("/:repositoryId/branch/:branchId", authenticated, (req, res) => {
+  controller.branch(req.params.repositoryId, req.params.branchId).then(branch => {
+    res.json(branch.scans);
+  }).catch(error => {
+    console.log(error);
+    res.status(500).send();
+  });
+})
 
 Router.delete("/", authenticated, (req, res) => {
   const { error, value } = Joi.object({

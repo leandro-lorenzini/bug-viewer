@@ -21,9 +21,20 @@ const finding = new mongoose.Schema({
 },
 { timestamps: true });
 
+const scans = new mongoose.Schema(
+  {
+    critical: { type: Number, default: 0 },
+    high: { type: Number, default: 0 },
+    medium: { type: Number, default: 0 },
+    low: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+);
+
 const branch = new mongoose.Schema(
   {
-    ref: { type: String, required: true }
+    ref: { type: String, required: true },
+    scans: [scans]
   },
   { timestamps: true }
 );

@@ -125,14 +125,39 @@ function branches(repositoryId, ref, skip) {
   });
 }
 
+function branch(repositoryId, branchId) {
+  return new Promise((resolve, reject) => {
+    var pipeline = [
+      { $match: { _id: new ObjectId(repositoryId) } },
+      { $unwind: "$branches" },
+      { $match: { "branches._id": new ObjectId(branchId) } },
+      { $replaceRoot: { newRoot: "$branches" } },
+    ];
+
+    models.repository.aggregate(pipeline).then(docs => {
+      resolve(docs[0])
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
+
 function upsert(repository, ref, findings) {
   return new Promise((resolve, reject) => {
+
+    var scan = {
+      critical: findings.filter(f => f.severity === 'CRITICAL' ).length, 
+      high: findings.filter(f => f.severity === 'HIGH' ).length, 
+      medium: findings.filter(f => f.severity === 'MEDIUM' ).length, 
+      low: findings.filter(f => f.severity === 'LOW' ).length 
+    };
+    
     addRepository(repository).then(async (repository) => {
       // Find branch Id
       let branchId = repository.branches.filter(b => b.ref === ref)?.[0]?._id;
       if (!branchId) {
         try {
-          branchId = await addBranch(repository._id, ref);
+          branchId = await addBranch(repository._id, ref, scan);
         } catch (error) {
           return reject(error);
         }
@@ -143,6 +168,10 @@ function upsert(repository, ref, findings) {
           f.branchId = branchId;
           return f;
         }));
+        await models.repository.updateOne(
+          { _id: repository._id, 'branches._id': branchId }, 
+          { $addToSet: { 'branches.$.scans': scan } }
+        );
         resolve({ repository, branchId: branchId });
       } catch (error) {
         reject(error);
@@ -288,9 +317,9 @@ function addRepository(name) {
   })
 }
 
-function addBranch(repositoryId, ref) {
+function addBranch(repositoryId, ref, scan) {
   return new Promise((resolve, reject) => {
-    let branch = { ref, _id: new ObjectId() };
+    let branch = { ref, _id: new ObjectId(), scans: [ scan ] };
     models.repository.updateOne(
       { _id: repositoryId },
       { $addToSet: { branches: branch } }
@@ -311,6 +340,7 @@ module.exports = {
   findings,
   repositories,
   branches,
+  branch,
   removeRepository,
   removeBranch,
   branchStats
