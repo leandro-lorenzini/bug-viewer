@@ -14,6 +14,7 @@ const upload = multer();
 function verifyToken(req, res, next) {
   const { error, value } = Joi.object({
     name: Joi.string().required(),
+    head: Joi.string().allow(''),
     ref: Joi.string().required(),
     token: Joi.string().required(),
     modifiedFiles: Joi.alternatives().try(Joi.string().allow(''), Joi.array().items(Joi.string())),
@@ -42,6 +43,7 @@ function verifyToken(req, res, next) {
 Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
   const { error, value } = Joi.object({
     name: Joi.string().required(),
+    head: Joi.string().allow(''),
     ref: Joi.string().required(),
     token: Joi.string().required(),
     modifiedFiles: Joi.alternatives().try(Joi.string().allow(''), Joi.array().items(Joi.string())),
@@ -105,7 +107,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
 
   // Upsert repository and scan
   try {
-    let upsertResult = await controller.upsert(value.name, value.ref, findings || []);
+    let upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || []);
     if (findings?.length) {
       for (let finding of findings) {
         if (["CRITICAL", "HIGH"].includes(finding.severity)) {

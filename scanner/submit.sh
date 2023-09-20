@@ -8,6 +8,7 @@ command="curl -f -k --location '$SERVER/api/repository'"
 command="$command --form 'token=\"$TOKEN\"'"
 command="$command --form 'name=\"$REPOSITORY\"'"
 command="$command --form 'ref=\"$REF\"'"
+command="$command --form 'head=\"$BRANCH\"'"
 command="$command --form 'removePaths=\"$(pwd)\"'"
 command="$command --form 'removePaths=\"localhost:5000\"'"
 

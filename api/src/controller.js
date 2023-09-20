@@ -10,10 +10,16 @@ function branchStats(repositoryId, branchId) {
         return resolve();
       }
 
+      // If no branch is informed, then return stats for master or main branch.
       if (!branchId) {
         let protectedBranches = repository.branches?.filter(
-          b => (
-            ["main", "master"].includes(b.ref) || b.ref.includes('/main') || b.ref.includes('/master'))
+          b => {
+            if (repository.head) {
+              return b.ref.includes === repository.head || b.ref.includes(`/${repository.head}`);
+            } else {
+              return ["main", "master"].includes(b.ref) || b.ref.includes('/main') || b.ref.includes('/master')
+            }
+          }
         );
         if (protectedBranches?.length) {
           branchId = protectedBranches[0]._id;
@@ -142,7 +148,7 @@ function branch(repositoryId, branchId) {
   });
 }
 
-function upsert(repository, ref, findings) {
+function upsert(repository, head, ref, findings) {
   return new Promise((resolve, reject) => {
 
     var scan = {
@@ -152,7 +158,7 @@ function upsert(repository, ref, findings) {
       low: findings.filter(f => f.severity === 'LOW' ).length 
     };
     
-    addRepository(repository).then(async (repository) => {
+    addRepository(repository, head).then(async (repository) => {
       // Find branch Id
       let branchId = repository.branches.filter(b => b.ref === ref)?.[0]?._id;
       if (!branchId) {
@@ -298,13 +304,14 @@ function removeBranch(repositoryId, branchId) {
   });
 }
 
-function addRepository(name) {
+function addRepository(name, head) {
   return new Promise((resolve, reject) => {
-    models.repository.findOne({ name }).then(doc => {
+    models.repository.findOne({ name }).then(async doc => {
       if (doc) {
+        await models.repository.updateOne({ name }, { head });
         resolve(doc);
       } else {
-        let repository = new models.repository({ name });
+        let repository = new models.repository({ name, head });
         repository.save().then((doc) => {
           resolve(doc);
         }).catch(error => {

@@ -42,6 +42,7 @@ const branch = new mongoose.Schema(
 const repository = new mongoose.Schema(
   {
     name: { type: String, required: true },
+    head: { type: String, required: false },
     branches: [branch]
   },
   { timestamps: true }

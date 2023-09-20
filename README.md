@@ -62,6 +62,7 @@ curl --location 'https://SERVER_NAME/api/repository' \
 |-------------------|------------------------------------|-----------|---------------------------------------------------------------|
 |name               |The name of the project/repository  |Yes        |String      |
 |ref                |The branch name or pull reuqest ref |Yes        |String      |
+|head               |The default/protected branch        |No         |String      |
 |token              |Token created using the UI/API      |Yes        |String      |
 |files              |Scanner result files in JSON format |Yes        |File or Array of Files |
 |removePaths        |Value to be erased on results file path field, tipically the path to your project folder |No (But probably needed)  |String or Array of Strings |
