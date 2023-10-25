@@ -54,8 +54,7 @@ fi
 if [ "$docker" = "true" ]; then
     bash ./scanner/docker.sh
     if ! ls "$directory"*__grype__* 1> /dev/null 2>&1; then
-        echo "No files containing '__grype__' found in the results directory."
-        exit 1
+        echo "Error: No files containing '__grype__' found in the results directory."
     fi
 fi
 
