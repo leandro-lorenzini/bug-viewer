@@ -5,7 +5,7 @@ echo "Installing eslint"
 rm -f package.json package-lock.json
 find . -type f \( -name ".eslintrc.js" -o -name ".eslintrc.json" -o -name ".eslintrc" \) -exec echo "Deleting {}" \; -exec rm -f {} \;
 
-npm i eslint eslint-plugin-security eslint-plugin-sonarjs eslint-plugin-xss eslint-plugin-no-unsanitized eslint-plugin-no-secrets eslint-plugin-react eslint-plugin-prettier
+npm i -g eslint eslint-plugin-security eslint-plugin-sonarjs eslint-plugin-xss eslint-plugin-no-unsanitized eslint-plugin-no-secrets eslint-plugin-react eslint-plugin-prettier
 
 # Look for package.json files in order to know where to run eslint
 find . -type f -name "package.json" -not -path '*/node_modules/*' -exec dirname {} \; | while read -r dir; do
