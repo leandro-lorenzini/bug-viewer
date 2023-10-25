@@ -39,9 +39,10 @@ function parse(parser, data, removePaths) {
         }
         
         // Mapping result fields
+        let parser_keys = Object.keys(parser.fields)
         results = results.map((result) => {
             let newResult = {};
-            for (let key of Object.keys(parser.fields)) {
+            for (let key of parser_keys) {
                 if (parser.fields[key]?.length && parser.fields[key].includes('"')) {
                     // Hardcoded value
                     newResult[key] = parser.fields[key].replace('"',"").replace('"',"");
