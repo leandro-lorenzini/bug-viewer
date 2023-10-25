@@ -16,8 +16,9 @@ function parse(parser, data, removePaths) {
         if (parser.unwind?.length) {
             let newResults = [];
             for (let result of results) {
+                let keys = Object.keys(result);
                 result = result[parser.unwind].map(item => {
-                    for (let key of Object.keys(result)) {
+                    for (let key of keys) {
                         if (key !== parser.unwind) {
                             item[key] = result[key];
                         }
@@ -27,6 +28,14 @@ function parse(parser, data, removePaths) {
                 newResults = newResults.concat(result)
             }
             results = newResults;
+        }
+
+        parser.severities = {
+            critical: String(parser.severities?.critical),
+            high: String(parser.severities?.high),
+            medium: String(parser.severities?.medium),
+            low: String(parser.severities?.low),
+            negligible: String(parser.severities?.negligible)
         }
         
         // Mapping result fields
@@ -58,16 +67,16 @@ function parse(parser, data, removePaths) {
             newResult['provider'] = parser.name;
             
             switch(String(newResult['severity'])) {
-                case String(parser.severities?.critical):
+                case parser.severities?.critical:
                     newResult['severity'] = 'CRITICAL'
                     break;
-                case String(parser.severities?.medium):
+                case parser.severities?.medium:
                     newResult['severity'] = 'MEDIUM'
                     break;
-                case String(parser.severities?.low):
+                case parser.severities?.low:
                     newResult['severity'] = 'LOW'
                     break;
-                case String(parser.severities?.negligible):
+                case parser.severities?.negligible:
                     newResult['severity'] = 'NEGLIGIBLE'
                     break;
                 default:
