@@ -109,4 +109,5 @@ bash ./scanner/submit.sh
 # Docker images have errors while buiding sometimes, make sure that we warn the users about it.
 if [ "$docker_error" = "true" ]; then
     echo "Error: No files containing '__grype__' found in the results directory."
+    exit 1
 fi
