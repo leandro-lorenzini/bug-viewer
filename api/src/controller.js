@@ -148,7 +148,7 @@ function branch(repositoryId, branchId) {
   });
 }
 
-function upsert(repository, head, ref, findings) {
+function upsert(repository, head, ref, findings, first) {
   return new Promise((resolve, reject) => {
 
     var scan = {
@@ -169,7 +169,9 @@ function upsert(repository, head, ref, findings) {
         }
       }
       try {
-        await models.findings.deleteMany({ branchId });
+        if (first) {
+          await models.findings.deleteMany({ branchId });
+        }
         await models.findings.insertMany(findings.map(f => {
           f.branchId = branchId;
           return f;

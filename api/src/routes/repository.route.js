@@ -71,11 +71,13 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
   }
 
   // Read Json file
-  let findings = [];
+  let first = true;
+  let block = false;
   for (let file of req.files) {
+    let findings = [];
     let parserName = file.originalname.match(/__(.*?)__/)[1];
     if (parsers?.[parserName]) {
-
+      console.log("Parsing " + file.originalname);
       let results = null;
       try {
         if(file.buffer.toString().length) {
@@ -91,40 +93,46 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
 
       findings = findings.concat(parse(parsers[parserName], results || [], removePaths))
 
+      // Remove findings for unchaged files
+      if (value.modifiedFiles?.length) {
+        findings = findings.filter((finding) => {
+          return normalizeToArray(value.modifiedFiles)
+            .map(f => (f.toLowerCase()))
+            .includes(finding.file.toLowerCase());
+        });
+      }
+
+      try {
+        let upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || [], first);
+      } catch (error) {
+        console.log(error);
+        return res.status(500).send("Error upserting repository and scan instance");
+      }
+      first = false;
+      console.log('Inserted results to the database');
+
+      if (findings?.length) {
+        for (let finding of findings) {
+          if (["CRITICAL", "HIGH"].includes(finding.severity)) {
+            block = true;
+          }
+        }
+      }
+
     } else {
       return res.status(206).send('Could not find a parser for the uploaded file ' + file.originalname);
     }
   }
 
-  // Remove findings for unchaged files
-  if (value.modifiedFiles?.length) {
-    findings = findings.filter((finding) => {
-      return normalizeToArray(value.modifiedFiles)
-        .map(f => (f.toLowerCase()))
-        .includes(finding.file.toLowerCase());
-    });
+  if (block) {
+    return res
+      .status(207)
+      .send(
+        "Scan results have been saved, one or more serious bug has been found! " +
+        `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?ref=${value.ref.replace(/\//g, "%2F")}&repository=${upsertResult.repository._id}&repositoryName=${upsertResult.repository.name} for details.`
+      );
   }
-
-  // Upsert repository and scan
-  try {
-    let upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || []);
-    if (findings?.length) {
-      for (let finding of findings) {
-        if (["CRITICAL", "HIGH"].includes(finding.severity)) {
-          return res
-            .status(207)
-            .send(
-              "Scan results have been saved, one or more serious bug has been found! " +
-              `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?ref=${value.ref.replace(/\//g, "%2F")}&repository=${upsertResult.repository._id}&repositoryName=${upsertResult.repository.name} for details.`
-            );
-        }
-      }
-    }
-    res.send("Scan results have been saved, no serious bug has been found :)");
-  } catch (error) {
-    console.log(error);
-    return res.status(500).send("Error upserting repository and scan instance");
-  }
+  res.send("Scan results have been saved, no serious bug has been found :)");
 });
 
 Router.get("/", authenticated, (req, res) => {
