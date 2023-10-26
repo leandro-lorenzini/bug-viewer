@@ -73,8 +73,9 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
   // Read Json file
   let first = true;
   let block = false;
+  let upsertResult = null;
+
   for (let file of req.files) {
-    let findings = [];
     let parserName = file.originalname.match(/__(.*?)__/)[1];
     if (parsers?.[parserName]) {
       console.log("Parsing " + file.originalname);
@@ -91,7 +92,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
       // Specific for docker scanning file name
       removePaths.push(`${value.name}-latest`);
 
-      findings = findings.concat(parse(parsers[parserName], results || [], removePaths))
+      var findings = parse(parsers[parserName], results || [], removePaths);
 
       // Remove findings for unchaged files
       if (value.modifiedFiles?.length) {
@@ -103,11 +104,12 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
       }
 
       try {
-        let upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || [], first);
+        upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || [], first);
       } catch (error) {
         console.log(error);
         return res.status(500).send("Error upserting repository and scan instance");
       }
+
       first = false;
       console.log('Inserted results to the database');
 
