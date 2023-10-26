@@ -51,12 +51,12 @@ if [ "$go" = "true" ]; then
 fi
 
 # DOCKER IMAGE SCANNING
-docker_error=false
+export docker_error=false
 if [ "$docker" = "true" ]; then
     bash ./scanner/docker.sh
     if ! ls "$directory"*__grype__* 1> /dev/null 2>&1; then
         echo "Error: No files containing '__grype__' found in the results directory."
-        docker_error=true
+        export docker_error=true
     fi
 fi
 
@@ -105,9 +105,3 @@ fi
 
 # SUBMIT THE RESULT TO THE BUG-VIEWER SERVER
 bash ./scanner/submit.sh
-
-# Docker images have errors while buiding sometimes, make sure that we warn the users about it.
-if [ "$docker_error" = "true" ]; then
-    echo "Error: No files containing '__grype__' found in the results directory."
-    exit 1
-fi

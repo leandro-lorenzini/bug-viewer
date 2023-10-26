@@ -46,3 +46,9 @@ if [ "$status_code" -ne 200 ]; then
     echo "Error: Received HTTP status code $status_code"
     exit 1
 fi
+
+# Docker images have errors while buiding sometimes, make sure that we warn the users about it.
+if [ "$docker_error" = "true" ]; then
+    echo "Error: No files containing '__grype__' found in the results directory."
+    exit 1
+fi
