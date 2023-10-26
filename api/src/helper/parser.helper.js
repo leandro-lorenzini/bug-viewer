@@ -25,14 +25,16 @@ function parse(parser, data, removePaths) {
             for (const item of unwound) {
                 const newResult = {};
                 for (const key of parserKeys) {
+                    // FIXED VALUE
                     if (parser.fields[key]?.length && parser.fields[key].includes('"')) {
                         newResult[key] = parser.fields[key].replace('"', "").replace('"', "");
                     } else {
+                        // NESTED VALUE
                         if (parser.fields[key]?.length && parser.fields[key].includes(".")) {
                             newResult[key] = parser.fields[key].split('.').reduce((o, key) => (o && o[key] ? o[key] : null), item);
                         } else {
-                            if (result[parser.fields[key]]) {
-                                newResult[key] = result[parser.fields[key]];
+                            if (item[parser.fields[key]]) {
+                                newResult[key] = item[parser.fields[key]];
                             }
                         }
                     }
