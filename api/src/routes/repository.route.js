@@ -99,7 +99,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
         findings = findings.filter((finding) => {
           return normalizeToArray(value.modifiedFiles)
             .map(f => (f.toLowerCase()))
-            .includes(finding.file.toLowerCase());
+            .includes(finding.file?.toLowerCase());
         });
       }
 
