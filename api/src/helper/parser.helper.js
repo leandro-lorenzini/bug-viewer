@@ -23,6 +23,11 @@ function parse(parser, data, removePaths) {
         for (const result of results) {
             const unwound = parser.unwind ? result[parser.unwind] : [result];
             for (const item of unwound) {
+                for (let parentKey of Object.keys(result)) {
+                    if (parentKey !== parser.unwind) {
+                        item[parentKey] = result[parentKey];
+                    }
+                }
                 const newResult = {};
                 for (const key of parserKeys) {
                     // FIXED VALUE
