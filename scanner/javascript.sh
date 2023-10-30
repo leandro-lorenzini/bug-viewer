@@ -32,36 +32,15 @@ echo "$dirs" | while read -r dir; do
   foldername=$(basename "$dir")
 
   # Scan the whole project
-  if [ "$FULL_CHECK" = true ]; then
-    echo "Running eslint with configuration $eslint_config in $dir"
-    foldername=$(basename "$dir" | sed 's/\//__slash__/g')
-    
-    if [ "$dir" != "." ]; then
-      find "$dir" -name 'package.json' -type f -exec rm -f {} +
-    fi
-
-    if ! echo "$dir" | grep -q "node_modules"; then
-      (npx eslint "$dir" --config "$eslint_config" --format json > "./scanner/tmp/result/__eslint__${foldername}_.json")
-    fi
-  else
-    # Only scan files modified in this branch.
-    modified_files=$(echo "$MODIFIED_FILES" | grep -E '\.(js|jsx|ts)$')
-    echo "Modified files: $modified_files"
-
-    # Check if any modified file is under the current directory
-    for file in $modified_files; do
-      if [[ "./$file" == "$dir"* ]]; then
-        echo "Running eslint with configuration $eslint_config in $dir for file $file"
-        foldername=$(basename "$dir" | sed 's/\//__slash__/g')
-        filename=$(basename "$file" | sed 's/\//__slash__/g')
-
-        # We don't want to check accidentally pushed node_modules folders.
-        if ! echo "$dir" | grep -q "node_modules"; then
-          (npx eslint "$file" --config "$eslint_config" --format json > "./scanner/tmp/result/__eslint__${foldername}_${filename}.json")
-        fi
-        
-      fi
-    done
-
+  echo "Running eslint with configuration $eslint_config in $dir"
+  foldername=$(basename "$dir" | sed 's/\//__slash__/g')
+  
+  if [ "$dir" != "." ]; then
+    find "$dir" -name 'package.json' -type f -exec rm -f {} +
   fi
+
+  if ! echo "$dir" | grep -q "node_modules"; then
+    (npx eslint "$dir" --config "$eslint_config" --format json > "./scanner/tmp/result/__eslint__${foldername}_.json")
+  fi
+
 done
