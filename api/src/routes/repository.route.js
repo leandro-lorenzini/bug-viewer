@@ -284,7 +284,7 @@ Router.get("/branch/:branchId", authenticated, (req, res) => {
           ? zlib
               .gunzipSync(Buffer.from(finding.details, "base64"))
               .toString("utf-8")
-          : null;
+          : finding.raw;
         findings.push(finding);
       }
       res.json({

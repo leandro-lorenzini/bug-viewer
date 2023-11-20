@@ -17,6 +17,7 @@ const finding = new mongoose.Schema({
   version: { type: String },
   resolution: { type: String },
   details: { type: String },
+  raw: { type: String },
   cve: { type: String },
 },
 { timestamps: true });

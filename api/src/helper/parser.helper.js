@@ -78,7 +78,8 @@ function parse(parser, data, removePaths) {
                     newResult['file'] = newResult['file'].replace(":latest", "");
                 }
 
-                newResult['details'] = zlib.gzipSync(JSON.stringify(item)).toString("base64");
+                //newResult['details'] = zlib.gzipSync(JSON.stringify(item)).toString("base64");
+                newResult['raw'] = JSON.stringify(item);
                 output.push(newResult);
             }
         }
