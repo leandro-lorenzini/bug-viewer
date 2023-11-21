@@ -26,7 +26,7 @@ function all(name, skip) {
     }
 
     Promise.all([
-      models.parser.find(match).skip(skip).limit(20),
+      models.parser.find(match).skip(skip).limit(10),
       models.parser.find(match)
     ]).then(values => {
       resolve({

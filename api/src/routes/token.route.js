@@ -17,7 +17,7 @@ Router.get("/", authenticated, async (req, res) => {
   }
 
   tokenController
-    .all(value.description, value.page ? (value.page - 1) * 20 : 0)
+    .all(value.description, value.page ? (value.page - 1) * 10 : 0)
     .then((result) => {
       res.json({
         results: {
@@ -26,7 +26,7 @@ Router.get("/", authenticated, async (req, res) => {
         },
         page: {
           current: value.page || 1,
-          all: Math.ceil(result.total / 20),
+          all: Math.ceil(result.total / 10),
         },
       });
     })

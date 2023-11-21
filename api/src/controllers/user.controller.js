@@ -91,7 +91,7 @@ async function all(email, skip) {
     }
 
     Promise.all([
-      models.user.find(match).skip(skip).limit(20),
+      models.user.find(match).skip(skip).limit(10),
       models.user.find(match),
     ])
       .then((values) => {

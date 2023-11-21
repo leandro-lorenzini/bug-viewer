@@ -81,7 +81,7 @@ function repositories(name, skip) {
     } : {};
 
     Promise.all([
-      models.repository.find(filter).skip(skip).limit(20),
+      models.repository.find(filter).skip(skip).limit(10),
       models.repository.find(filter),
     ])
       .then((values) => {
@@ -116,7 +116,7 @@ function branches(repositoryId, ref, skip) {
     }
 
     Promise.all([
-      models.repository.aggregate(pipeline.concat({ $sort: { name: 1 } }, { $skip: skip }, { $limit: 20 })),
+      models.repository.aggregate(pipeline.concat({ $sort: { name: 1 } }, { $skip: skip }, { $limit: 10 })),
       models.repository.aggregate(pipeline),
     ])
       .then((values) => {
@@ -223,7 +223,7 @@ function findings(
     aggregationFindings.push(
       { $sort: { severity: 1, _id: 1 } },
       { $skip: skip || 0 },
-      { $limit: 20 }
+      { $limit: 10 }
     );
 
     aggregationTotal.push(

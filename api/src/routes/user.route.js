@@ -85,7 +85,7 @@ Router.get("/", admin, async (req, res) => {
   }
   
   userController
-    .all(value.email, value.page ? (value.page - 1) * 20 : 0)
+    .all(value.email, value.page ? (value.page - 1) * 10 : 0)
     .then((result) => {
       res.json({
         results: {
@@ -94,7 +94,7 @@ Router.get("/", admin, async (req, res) => {
         },
         page: {
           current: value.page || 1,
-          all: Math.ceil(result.total / 20),
+          all: Math.ceil(result.total / 10),
         },
       });
     })

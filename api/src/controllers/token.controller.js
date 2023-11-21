@@ -48,7 +48,7 @@ async function all(description, skip) {
     }
 
     Promise.all([
-      models.token.find(match).skip(skip).limit(20),
+      models.token.find(match).skip(skip).limit(10),
       models.token.find(match),
     ])
       .then((values) => {

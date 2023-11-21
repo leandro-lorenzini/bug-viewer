@@ -150,7 +150,7 @@ Router.get("/", authenticated, (req, res) => {
   controller
     .repositories(
       value.name,
-      value.page ? (value.page - 1) * 20 : 0
+      value.page ? (value.page - 1) * 10 : 0
     )
     .then((result) => {
       // Get stats
@@ -178,7 +178,7 @@ Router.get("/", authenticated, (req, res) => {
             },
             page: {
               current: value.page || 1,
-              all: Math.ceil(result.total / 20),
+              all: Math.ceil(result.total / 10),
             },
           });
         });
@@ -209,7 +209,7 @@ Router.get("/branch", authenticated, (req, res) => {
     .branches(
       value.repository,
       value.ref,
-      value.page ? (value.page - 1) * 20 : 0
+      value.page ? (value.page - 1) * 10 : 0
     )
     .then((result) => {
       // Get stats
@@ -237,7 +237,7 @@ Router.get("/branch", authenticated, (req, res) => {
             },
             page: {
               current: value.page || 1,
-              all: Math.ceil(result.total / 20),
+              all: Math.ceil(result.total / 10),
             },
           });
         });
@@ -275,7 +275,7 @@ Router.get("/branch/:branchId", authenticated, (req, res) => {
       normalizeToArray(value.ruleIds),
       normalizeToArray(value.severities),
       normalizeToArray(value.files),
-      value.page ? (value.page - 1) * 20 : 0
+      value.page ? (value.page - 1) * 10 : 0
     )
     .then((result) => {
       let findings = [];
@@ -295,7 +295,7 @@ Router.get("/branch/:branchId", authenticated, (req, res) => {
         attributes: result.properties,
         page: {
           current: value.page || 1,
-          all: Math.ceil(result.total / 20),
+          all: Math.ceil(result.total / 10),
         },
       });
     })

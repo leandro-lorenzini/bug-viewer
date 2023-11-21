@@ -265,7 +265,7 @@ function Branches() {
           <Pagination
             total={total}
             current={parseInt(page?.current) || 1}
-            pageSize={20}
+            pageSize={10}
             showSizeChanger={false}
             disabled={loading}
             onChange={(e) => {
