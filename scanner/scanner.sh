@@ -20,7 +20,7 @@ if [ "$FULL_CHECK" = true ]; then
     # Check which scanners we should run according to the project files.
     tf=$(find . -name '*.tf' -type f -print -quit | grep -q . && echo true || echo false)
     k8=$(find . \( -name 'deployment.yaml' -o -name 'deployment.yml' -o -name 'deploy.yaml' -o -name 'deploy.yml' -o -name 'kustomization.yaml' -o -name 'kustomization.yml' \) -type f -print -quit | grep -q . && echo true || echo false)
-    js=$(find . -name 'package.json' -type f -print -quit | grep -q . && echo true || echo false)
+    #js=$(find . -name 'package.json' -type f -print -quit | grep -q . && echo true || echo false)
     py=$(find . -name '*.py' -type f -print -quit | grep -q . && echo true || echo false)
     go=$(find . -name '*.go' -type f -print -quit | grep -q . && echo true || echo false)
     docker=$(find . -name 'Dockerfile' -type f -print -quit | grep -q . && echo true || echo false)
@@ -33,7 +33,7 @@ else
     # Check which scanners we should run according to the changed files.
     tf=$(echo "$MODIFIED_FILES" | grep -c '\.tf$' | grep -q '^0$' || echo true)
     k8=$(echo "$MODIFIED_FILES" | egrep -c 'deployment.yaml$|deployment.yml$|deploy.yaml$|deploy.yml$|kustomization.yaml$|kustomization.yml$' | grep -q '^0$' || echo true)
-    js=$(echo "$MODIFIED_FILES" | grep -c '\.\(js\|jsx\)$' | grep -q '^0$' || echo true)
+    #js=$(echo "$MODIFIED_FILES" | grep -c '\.\(js\|jsx\)$' | grep -q '^0$' || echo true)
     py=$(echo "$MODIFIED_FILES" | grep -c '\.py$' | grep -q '^0$' || echo true)
     go=$(echo "$MODIFIED_FILES" | grep -c '\.go$' | grep -q '^0$' || echo true)
     docker=$(echo "$MODIFIED_FILES" | grep -c 'Dockerfile$' | grep -q '^0$' || echo true)
@@ -61,13 +61,14 @@ if [ "$docker" = "true" ]; then
 fi
 
 # JAVASCRIPT SCANNING
-if [ "$js" = "true" ]; then
-    bash ./scanner/javascript.sh
-    if ! ls "$directory"*__eslint__* 1> /dev/null 2>&1; then
-        echo "No files containing '__eslint__' found in the results directory."
-        exit 1
-    fi
-fi
+# Using semgrep for JavaScript files
+#if [ "$js" = "true" ]; then
+#    bash ./scanner/javascript.sh
+#    if ! ls "$directory"*__eslint__* 1> /dev/null 2>&1; then
+#        echo "No files containing '__eslint__' found in the results directory."
+#        exit 1
+#    fi
+#fi
 
 # PYTHON SCANNING
 if [ "$py" = "true" ]; then
