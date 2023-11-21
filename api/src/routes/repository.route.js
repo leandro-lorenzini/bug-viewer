@@ -104,7 +104,7 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
       }
 
       try {
-        upsertResult = await controller.upsert(value.name, value.head, value.ref, findings || [], first);
+        upsertResult = await controller.upsert(value.name, value.head, value.ref.replace("refs/heads/", ""), findings || [], first);
       } catch (error) {
         console.log(error);
         return res.status(500).send("Error upserting repository and scan instance");
