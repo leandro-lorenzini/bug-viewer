@@ -84,6 +84,7 @@ const parser = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
+    type: { type: String, enum: ['code', 'infrastructure', 'image', 'package', 'secret'] },
     rootPath: { type: String },
     unwind: { type: String },
     fields: {

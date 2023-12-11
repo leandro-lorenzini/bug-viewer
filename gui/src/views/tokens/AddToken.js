@@ -8,7 +8,7 @@ function AddToken(props) {
   const createToken = (form) => {
     setProcessing(true);
     axios
-      .post("/api/token", form, { withCredentials: true })
+      .post(`${process.env.REACT_APP_API_URL || '/api/'}token`, form, { withCredentials: true })
       .then((response) => {
         props.onSuccess(response.data.token);
       })

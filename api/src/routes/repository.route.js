@@ -194,6 +194,28 @@ Router.get("/", authenticated, (req, res) => {
     });
 });
 
+Router.get("/:id", authenticated, (req, res) => {
+  controller
+    .repository(req.params.id)
+    .then(async (result) => {
+      if (!result) {
+        res.status(400).send();
+      }
+      let providers = await controller.branchStats(result._id);
+      res.json({
+        _id: result._id,
+        name: result.name,
+        head: result.head || getMaster(result.branches),
+        providers: providers,
+        branches: result.branches,
+        updatedAt: providers?.[0].updatedAt
+      });
+    }).catch(error => {
+      console.log(error);
+      res.status(500).send();
+    })
+});
+
 Router.get("/branch", authenticated, (req, res) => {
   const { error, value } = Joi.object({
     repository: Joi.string().required(),
@@ -213,39 +235,29 @@ Router.get("/branch", authenticated, (req, res) => {
     )
     .then((result) => {
       // Get stats
-      let promises = result.branches.map(b => {
-        return controller.branchStats(value.repository, b._id);
-      })
+      let promises = result.branches.map((b) => {
+        return {
+          _id: b._id, 
+          ref: b.ref, 
+          scans: b.scans,
+        };
+      });
 
       Promise.all(promises).then(values => {
-        let promises = result.branches.map((b, index) => {
-          return {
-            _id: b._id, 
-            ref: b.ref, 
-            scans: b.scans,
-            updatedAt: values[index]?.[0].updatedAt,
-            providers: values[index]
-          };
+        console.log(values)
+        res.json({
+          results: {
+            data: values,
+            total: result.total,
+          },
+          page: {
+            current: value.page || 1,
+            all: Math.ceil(result.total / 10),
+          },
         });
-
-        Promise.all(promises).then(values => {
-          console.log(values)
-          res.json({
-            results: {
-              data: values,
-              total: result.total,
-            },
-            page: {
-              current: value.page || 1,
-              all: Math.ceil(result.total / 10),
-            },
-          });
-        });
-
-      }).catch(error => {
-        console.log(error);
-        res.status(500).send();
       });
+
+      
 
     })
     .catch((error) => {
@@ -312,7 +324,7 @@ function normalizeToArray(value) {
 }
 Router.get("/:repositoryId/branch/:branchId", authenticated, (req, res) => {
   controller.branch(req.params.repositoryId, req.params.branchId).then(branch => {
-    res.json(branch.scans);
+    res.json(branch);
   }).catch(error => {
     console.log(error);
     res.status(500).send();
@@ -358,5 +370,19 @@ Router.delete("/:repositoryId/branch/:branchId", authenticated, (req, res) => {
       res.status(500).send();
     });
 });
+
+function getMaster(branches) {
+  for (let branch of branches) {
+    if (branch.ref.indexOf('main') > -1){
+      return branch.ref;
+    }
+  }
+  for (let branch of branches) {
+    if (branch.ref.indexOf('master') > -1){
+      return branch.ref;
+    }
+  }
+  return null;
+}
 
 module.exports = Router;

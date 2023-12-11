@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Form, Typography, Drawer, Button, Row, Col } from "antd";
+import { Input, Form, Typography, Drawer, Button, Row, Col, Select } from "antd";
 import axios from "axios";
 import ParserHelp from "./ParserHelp";
 
@@ -9,7 +9,7 @@ function AddParser(props) {
   const createParser = (form) => {
     setProcessing(true);
     axios
-      .post("/api/parser", form, { withCredentials: true })
+      .post(`${process.env.REACT_APP_API_URL || '/api/'}parser`, form, { withCredentials: true })
       .then(() => {
         props.onSuccess();
       })
@@ -31,6 +31,15 @@ function AddParser(props) {
             </Form.Item>
             <Form.Item name="description" label="Parser description">
               <Input placeholder="Parser description" />
+            </Form.Item>
+            <Form.Item name="type" required label="Parser type" initialValue="code">
+              <Select defaultValue="code" options={[
+                { label: 'Code', value: 'code' },
+                { label: 'Infrastructure', value: 'infrastructure' },
+                { label: 'Image', value: 'image' },
+                { label: 'Package', value: 'package' },
+                { label: 'Secret', value: 'secret' }
+              ]}/>
             </Form.Item>
             <Form.Item name="rootPath" label="JSON Root path">
               <Input placeholder="JSON Root path" />

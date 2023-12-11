@@ -63,7 +63,7 @@ const severity = {
   ),
 };
 
-function Findings() {
+function Findings(props) {
   const [loading, setLoading] = useState(true);
 
   const [findings, setFindings] = useState([]);
@@ -86,40 +86,35 @@ function Findings() {
   useEffect(() => {
     getResults(providers, severities, ruleIds, files, 1);
 
-    axios.get(`/api/repository/${searchParams.get('repository')}/branch/${params.branchId}`)
-      .then(response => {
+   
         setScans(
           {
-            labels: response.data.map((data) => new Date(data.updatedAt).toDateString()), 
+            labels: props.branch.scans.map((data) => new Date(data.updatedAt).toDateString()), 
             datasets: [
               {
                 label: "Critical",
-                data: response.data.map((data) => data.critical),
+                data: props.branch.scans.map((data) => data.critical),
                 backgroundColor: '#750000'
               },
               {
                 label: "High",
-                data: response.data.map((data) => data.high),
+                data: props.branch.scans.map((data) => data.high),
                 backgroundColor: '#F00000'
               },
               {
                 label: "Medium",
-                data: response.data.map((data) => data.medium),
+                data: props.branch.scans.map((data) => data.medium),
                 backgroundColor: '#FFA500'
               },
               {
                 label: "Low",
-                data: response.data.map((data) => data.low),
+                data: props.branch.scans.map((data) => data.low),
                 backgroundColor: '#9ACEEB'
               }
             ]
           }
 
         );
-      })
-      .catch(error => {
-        console.log(error);
-      })
 
   }, [providers, severities, ruleIds, files]);
 
@@ -136,7 +131,7 @@ function Findings() {
 
     axios
       .get(
-        `/api/repository/branch/${params.branchId}?` +
+        `${process.env.REACT_APP_API_URL || '/api/'}repository/branch/${props.branch._id}?` +
           query,
         { withCredentials: true }
       )
@@ -537,45 +532,9 @@ function Findings() {
 </Layout>
 
   return (
-    <Layout>
-      <Typography.Title level={3}>
-        <BugOutlined /> Findings - {searchParams.get('ref')}
-      </Typography.Title>
-      <Breadcrumb
-        style={{ marginBottom: 10 }}
-        items={[
-          {
-            title: <Link to="/">Repositories</Link>,
-          },
-          {
-            title: <Link to={`/repository/branch/?${queryString.stringify({ 
-              repository: searchParams.get('repository'),
-              repositoryName: searchParams.get('repositoryName')
-            })}`} >{searchParams.get('repositoryName')}</Link>,
-          },
-          {
-            title: "Findings",
-          },
-        ]}
-      />
-      <Layout>
-        <Content style={{ backgroundColor: "white", padding: 10 }}>
-          <Tabs items={[
-            { 
-              key: 'findings',
-              label: 'Findings',
-              children: list
-            },
-            {
-              key: 'stats',
-              label: 'Overview',
-              children: <Stats scans={scans} />
-            }
-          ]}/>
-        </Content>
-      </Layout>
-      
-    </Layout>
+    <Content style={{ backgroundColor: "white", padding: 10 }}>
+      {list}
+    </Content>
   );
 }
 

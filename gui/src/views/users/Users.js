@@ -53,7 +53,7 @@ function Users() {
     });
 
     axios
-      .get("/api/user/?" + query, { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}user/?${query}`, { withCredentials: true })
       .then((response) => {
         setRepositories(response.data.results.data);
         setTotal(response.data.results.total);
@@ -66,7 +66,7 @@ function Users() {
 
   function removeUser(userId) {
     axios
-      .delete("/api/user/" + userId)
+      .delete(`${process.env.REACT_APP_API_URL || '/api/'}user/${userId}`)
       .then(() => {
         openNotificationWithIcon(
           "success",

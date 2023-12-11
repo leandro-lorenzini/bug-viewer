@@ -9,7 +9,7 @@ function Signin(props) {
 
   useState(() => {
     axios
-      .get("/api/auth/options", { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}auth/options`, { withCredentials: true })
       .then((response) => {
         setOptions(response.data);
       })
@@ -21,7 +21,7 @@ function Signin(props) {
   const onFinish = (values) => {
     setLoading(true);
     axios
-      .post("/api/auth", values)
+      .post(`${process.env.REACT_APP_API_URL || '/api/'}auth`, values)
       .then((response) => {
         props.setUser(response.data);
       })
@@ -51,7 +51,7 @@ function Signin(props) {
         onFinish={onFinish}
       >
         <div style={{ fontSize: 25, textAlign: "center", marginBottom: 30 }}>
-          <span style={{ marginRight: 5 }}>BugViewer</span>
+          <span style={{ marginRight: 5 }}>BugViewer {process.env.REACT_APP_API_URL}</span>
           <BugOutlined />
         </div>
 
@@ -96,7 +96,7 @@ function Signin(props) {
                 htmlType="button"
                 style={{ width: "100%" }}
                 onClick={() => {
-                  window.location.href = encodeURI("/api/auth/sso");
+                  window.location.href = encodeURI(`${process.env.REACT_APP_API_URL || '/api/'}auth/sso`);
                 }}
               >
                 Log in using SSO

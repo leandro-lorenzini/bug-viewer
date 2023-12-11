@@ -21,6 +21,7 @@ import AuthenticationSettings from "./views/AuthenticationSettings";
 import Users from "./views/users/Users";
 import ChangePassword from "./views/ChangePassword";
 import Parser from "./views/parsers/Parsers";
+import Repository from "./views/Repository";
 
 function App() {
   const { Sider, Footer } = Layout;
@@ -44,7 +45,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("/api/auth")
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}auth`)
       .then((response) => {
         if (response.data && response.data.userId) {
           setUser({
@@ -61,7 +62,7 @@ function App() {
       });
 
       axios
-      .get("/api/settings/version")
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}settings/version`)
       .then((response) => {
         setVersion(response.data);
       })
@@ -123,7 +124,7 @@ function App() {
             items={[
               {
                 key: "repository",
-                label: <Link to="/">Repositories</Link>,
+                label: <Link to="/repositories">Repositories</Link>,
                 icon: <BranchesOutlined />,
               },
               {
@@ -164,7 +165,7 @@ function App() {
                 children: [
                   {
                     key: "logout",
-                    label: <a href="/api/auth/signout">Sign out</a>,
+                    label: <a href={`${process.env.REACT_APP_API_URL || '/api/'}auth/signout`}>Sign out</a>,
                   },
                   {
                     key: "change-password",
@@ -183,9 +184,14 @@ function App() {
           <Content style={{ paddingRight: 10, paddingLeft: 10 }}>
             <Routes>
               <Route
-                key={"repository"}
-                path="/repository"
+                key={"repositories"}
+                path="/repositories"
                 element={<Repositories />}
+              />
+              <Route
+                key={"repository"}
+                path="/repository/:repositoryId"
+                element={<Repository />}
               />
               <Route
                 path="/repository/branch"

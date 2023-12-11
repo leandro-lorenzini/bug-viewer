@@ -53,7 +53,7 @@ function Parser() {
     });
 
     axios
-      .get("/api/parser?" + query, { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}parser?${query}`, { withCredentials: true })
       .then((response) => {
         setRepositories(response.data.results.data);
         setTotal(response.data.results.total);
@@ -66,7 +66,7 @@ function Parser() {
 
   function removeParser(parserId) {
     axios
-      .delete("/api/parser/" + parserId)
+      .delete(`${process.env.REACT_APP_API_URL || '/api/'}parser/${parserId}`)
       .then(() => {
         openNotificationWithIcon(
           "success",
@@ -123,6 +123,9 @@ function Parser() {
           },
           {
             title: 'Description', dataIndex: 'description', key: 'description'
+          },
+          {
+            title: 'Type', dataIndex: 'type', key: 'type'
           },
           {
             title: 'Last updated', dataIndex: 'updatedAt', key: 'updatedAt', render: (updatedAt) => (updatedAt ? new Date(updatedAt).toLocaleString() : '-')
