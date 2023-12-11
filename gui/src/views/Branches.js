@@ -63,7 +63,7 @@ function Branches() {
       page,
     });
     axios
-      .get(`/api/repository/branch?` + query, {
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}repository/branch?` + query, {
         withCredentials: true,
       })
       .then((response) => {
@@ -89,7 +89,7 @@ function Branches() {
 
   function getParsers() {
     axios
-      .get("/api/parser?page=1", { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}parser?page=1`, { withCredentials: true })
       .then((response) => {
         setParsers(response.data.results.data);
       })
@@ -97,7 +97,7 @@ function Branches() {
 
   function removeBranch(branch) {
     axios
-      .delete(`/api/repository/${searchParams.get('repository')}/branch/${branch}`)
+      .delete(`${process.env.REACT_APP_API_URL || '/api/'}repository/${searchParams.get('repository')}/branch/${branch}`)
       .then(() => {
         openNotificationWithIcon("success", "Branch has been removed.");
         getResults(ref, 1);

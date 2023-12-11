@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Input, Form, Drawer, Button, Row, Col, Typography } from "antd";
+import { Input, Form, Drawer, Button, Row, Col, Typography, Select } from "antd";
 import axios from "axios";
 import ParserHelp from "./ParserHelp";
 
@@ -9,7 +9,7 @@ function UpdateParser(props) {
   const updateParser = (form) => {
     setProcessing(true);
     axios
-      .patch(`/api/parser/${props.parser._id}`, form, { withCredentials: true })
+      .patch(`${process.env.REACT_APP_API_URL || '/api/'}parser/${props.parser._id}`, form, { withCredentials: true })
       .then(() => {
         props.onSuccess();
       })
@@ -31,6 +31,15 @@ function UpdateParser(props) {
             </Form.Item>
             <Form.Item name="description" required label="Parser description" initialValue={props.parser.description}>
               <Input placeholder="Parser description" defaultValue={props.parser.description} />
+            </Form.Item>
+            <Form.Item name="type" required label="Parser type" initialValue={props.parser.type}>
+              <Select defaultValue={props.parser.type} options={[
+                { label: 'Code', value: 'code' },
+                { label: 'Infrastructure', value: 'infrastructure' },
+                { label: 'Image', value: 'image' },
+                { label: 'Package', value: 'package' },
+                { label: 'Secret', value: 'secret' }
+              ]}/>
             </Form.Item>
             <Form.Item name="rootPath" label="JSON Root path" initialValue={props.parser.rootPath}>
               <Input placeholder="JSON Root path" defaultValue={props.parser.rootPath} />

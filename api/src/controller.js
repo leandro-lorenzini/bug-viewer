@@ -26,6 +26,10 @@ function branchStats(repositoryId, branchId) {
         }
       }
 
+      if (!branchId) {
+        resolve();
+      }
+
       const pipeline = [
         { $match: { branchId: new ObjectId(branchId) } },
         {
@@ -67,6 +71,16 @@ function branchStats(repositoryId, branchId) {
       reject(error);
     });
 
+  });
+}
+
+function repository(_id) {
+  return new Promise((resolve, reject) => {
+    models.repository.findOne({ _id }).then(doc => {
+      resolve(doc);
+    }).catch(error => {
+      reject(error);
+    });
   });
 }
 
@@ -137,8 +151,55 @@ function branch(repositoryId, branchId) {
       { $match: { _id: new ObjectId(repositoryId) } },
       { $unwind: "$branches" },
       { $match: { "branches._id": new ObjectId(branchId) } },
-      { $replaceRoot: { newRoot: "$branches" } },
+      {
+        $lookup: {
+          from: 'findings',
+          localField: 'branches._id',
+          foreignField: 'branchId',
+          as: 'branches.findings'
+        }
+      },
+      { $unwind: "$branches.findings" },
+      {
+        $group: {
+          _id: "$branches.findings.provider",
+          high: { $sum: { $cond: [{ $eq: ["$branches.findings.severity", 'HIGH'] }, 1, 0] } },
+          medium: { $sum: { $cond: [{ $eq: ["$branches.findings.severity", 'MEDIUM'] }, 1, 0] } },
+          low: { $sum: { $cond: [{ $eq: ["$branches.findings.severity", 'LOW'] }, 1, 0] } },
+          critical: { $sum: { $cond: [{ $eq: ["$branches.findings.severity", 'CRITICAL'] }, 1, 0] } },
+          negligible: { $sum: { $cond: [{ $eq: ["$branches.findings.severity", 'NEGLIGIBLE'] }, 1, 0] } },
+          ref: { $first: "$branches.ref" },
+          root_id: { $first: "$branches._id" },
+          scans: { $first: "$branches.scans" }
+        }
+      },
+      {
+        $group: {
+          _id: "$root_id",
+          ref: { $first: "$ref" },
+          scans: { $first: "$scans"},
+          findings: {
+            $push: {
+              provider: "$_id",
+              high: "$high",
+              medium: "$medium",
+              low: "$low",
+              critical: "$critical",
+              negligible: "$negligible"
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          ref: 1,
+          scans: 1,
+          findings: 1
+        }
+      }
     ];
+    
 
     models.repository.aggregate(pipeline).then(docs => {
       resolve(docs[0])
@@ -352,5 +413,6 @@ module.exports = {
   branch,
   removeRepository,
   removeBranch,
-  branchStats
+  branchStats,
+  repository
 };

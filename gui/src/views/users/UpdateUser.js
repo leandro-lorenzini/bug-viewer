@@ -8,7 +8,7 @@ function UpdateUser(props) {
   const createUser = (form) => {
     setProcessing(true);
     axios
-      .patch(`/api/user/${props.userId}`, form, { withCredentials: true })
+      .patch(`${process.env.REACT_APP_API_URL || '/api/'}user/${props.userId}`, form, { withCredentials: true })
       .then(() => {
         props.onSuccess();
       })

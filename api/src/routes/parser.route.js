@@ -37,6 +37,7 @@ Router.patch("/:parserId", admin, (req, res) => {
 const parserSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().allow(''),
+  type: Joi.string().allow('code', 'infrastructure', 'image', 'package', 'secret'),
   rootPath: Joi.string().allow(''),
   unwind: Joi.string().allow(''),
   fields: Joi.object({

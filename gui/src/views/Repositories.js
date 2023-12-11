@@ -21,7 +21,7 @@ import {
 import axios from "axios";
 import queryString from "query-string";
 import { Content } from "antd/es/layout/layout";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Repositories() {
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ function Repositories() {
     });
 
     axios
-      .get("/api/repository?" + query, { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}repository?${query}`, { withCredentials: true })
       .then((response) => {
 
         let providers = []
@@ -73,7 +73,7 @@ function Repositories() {
 
   function getParsers() {
     axios
-      .get("/api/parser?page=1", { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}parser?page=1`, { withCredentials: true })
       .then((response) => {
         setParsers(response.data.results.data);
       })
@@ -206,9 +206,7 @@ function Repositories() {
           {
             title: '', key: 'Actions', width: '10%', fixed: 'right', render: (_, record) => (
               <Space>
-                <Button type="link" icon={<BranchesOutlined/>} onClick={() => {
-                      navigate({ pathname: 'branch', search: `?${queryString.stringify({ repository: record._id, repositoryName: record.name })}` });
-                    }}>Branches</Button>
+                <Link to={`/repository/${record._id}`}>Details</Link>
               </Space>
             )
           }

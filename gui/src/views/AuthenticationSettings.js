@@ -31,7 +31,7 @@ function AuthenticationSettings() {
   };
 
   function getSettings() {
-    axios.get(`/api/settings/`, { withCredentials: true }).then((response) => {
+    axios.get(`${process.env.REACT_APP_API_URL || '/api/'}settings/`, { withCredentials: true }).then((response) => {
       setSettings(response.data);
       setSsoEnabled(response.data?.sso?.enabled);
     });
@@ -41,7 +41,7 @@ function AuthenticationSettings() {
     setProcessing(true);
     console.log(form);
     axios
-      .post("/api/settings/sso", form, { withCredentials: true })
+      .post(`${process.env.REACT_APP_API_URL || '/api/'}settings/sso`, form, { withCredentials: true })
       .then(() => {
         openNotificationWithIcon("success", "Settings have been saved");
       })

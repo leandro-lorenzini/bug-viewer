@@ -54,7 +54,7 @@ function Tokens() {
     });
 
     axios
-      .get("/api/token?" + query, { withCredentials: true })
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}token?${query}`, { withCredentials: true })
       .then((response) => {
         setRepositories(response.data.results.data);
         setTotal(response.data.results.total);
@@ -67,7 +67,7 @@ function Tokens() {
 
   function removeToken(tokenId) {
     axios
-      .delete("/api/token/" + tokenId)
+      .delete(`${process.env.REACT_APP_API_URL || '/api/'}token/${tokenId}`)
       .then(() => {
         openNotificationWithIcon(
           "success",

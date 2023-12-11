@@ -12,7 +12,7 @@ function ChangePassword(props) {
     setProcessing(true);
     axios
       .post(
-        "/api/auth/change-password",
+        `${process.env.REACT_APP_API_URL || '/api/'}auth/change-password`,
         { password: form.password },
         { withCredentials: true }
       )

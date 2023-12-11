@@ -21,6 +21,7 @@ import AuthenticationSettings from "./views/AuthenticationSettings";
 import Users from "./views/users/Users";
 import ChangePassword from "./views/ChangePassword";
 import Parser from "./views/parsers/Parsers";
+import Repository from "./views/Repository";
 
 function App() {
   const { Sider, Footer } = Layout;
@@ -44,7 +45,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("/api/auth")
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}auth`)
       .then((response) => {
         if (response.data && response.data.userId) {
           setUser({
@@ -61,7 +62,7 @@ function App() {
       });
 
       axios
-      .get("/api/settings/version")
+      .get(`${process.env.REACT_APP_API_URL || '/api/'}settings/version`)
       .then((response) => {
         setVersion(response.data);
       })
@@ -123,7 +124,7 @@ function App() {
             items={[
               {
                 key: "repository",
-                label: <Link to="/">Repositories</Link>,
+                label: <Link to="/repositories">Repositories</Link>,
                 icon: <BranchesOutlined />,
               },
               {
@@ -164,7 +165,7 @@ function App() {
                 children: [
                   {
                     key: "logout",
-                    label: <a href="/api/auth/signout">Sign out</a>,
+                    label: <a href={`${process.env.REACT_APP_API_URL || '/api/'}auth/signout`}>Sign out</a>,
                   },
                   {
                     key: "change-password",
@@ -182,19 +183,23 @@ function App() {
         <Layout style={{ height: "100%", marginLeft: !collapsed ? 200 : 90 }}>
           <Content style={{ paddingRight: 10, paddingLeft: 10 }}>
             <Routes>
+              
               <Route
-                key={"repository"}
-                path="/repository"
+                key={"repositories"}
+                path="/repositories"
                 element={<Repositories />}
               />
               <Route
-                path="/repository/branch"
-                element={<Branches />}
+                key={"repository"}
+                path="/repository/:repositoryId"
+                element={<Repository />}
               />
               <Route
-                path="/repository/branch/:branchId"
-                element={<Findings />}
+                key={"repository"}
+                path="/repository/:repositoryId/branch/:branchId"
+                element={<Repository />}
               />
+             
 
               <Route path="/token" element={<Tokens />} />
               <Route path="/parser" element={<Parser />} />
@@ -204,7 +209,7 @@ function App() {
                 element={<AuthenticationSettings />}
               />
 
-              <Route path="*" element={<Navigate to="/repository" />} />
+              <Route path="*" element={<Navigate to="/repositories" />} />
             </Routes>
           </Content>
           <Footer style={{ textAlign: 'center', color: '#7f7b7b' }}>

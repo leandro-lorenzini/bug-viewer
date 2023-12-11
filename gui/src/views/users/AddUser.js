@@ -8,7 +8,7 @@ function AddUser(props) {
   const createUser = (form) => {
     setProcessing(true);
     axios
-      .post("/api/user", form, { withCredentials: true })
+      .post(`${process.env.REACT_APP_API_URL || '/api/'}user`, form, { withCredentials: true })
       .then(() => {
         props.onSuccess();
       })
