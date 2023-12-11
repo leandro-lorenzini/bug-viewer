@@ -45,13 +45,14 @@ function Repository() {
 
         if (!branchId) {
           response.data?.branches?.forEach((branch) => {
-            if (branch.ref === response.data.head || 
-              branch.ref === `refs/heads/${response.data.head}`) {
+            if (
+              branch.ref === response.data.head ||
+              branch.ref === `refs/heads/${response.data.head}`
+            ) {
               getBranch(branch._id);
             }
           });
         }
-
       });
   }
 
@@ -193,7 +194,16 @@ function Repository() {
         </>
       );
     }
-    return;
+    return (
+      <Space>
+        <Avatar shape="square" style={{ backgroundColor: "green" }}>
+          A
+        </Avatar>
+        <Typography.Text style={{ margin: 0 }}>
+          No serious vulnerabilities found.
+        </Typography.Text>
+      </Space>
+    );
   }
 
   useEffect(() => {
@@ -204,132 +214,160 @@ function Repository() {
     }
   }, [branchId]);
 
-  const summary = <Row>
-  <Col span={18} style={{ paddingRight: 10 }}>
-    <Content style={{ padding: 20, backgroundColor: "white" }}>
+  const summary = (
+    <Row>
+      <Col span={18} style={{ paddingRight: 10 }}>
+        <Content style={{ padding: 20, backgroundColor: "white" }}>
+          {loading ? (
+            <Skeleton active />
+          ) : (
+            <>
+              <Row gutter={12}>
+                <Col span={8} style={{ marginBottom: 10 }}>
+                  <Card>
+                    <Typography.Title style={{ marginTop: 0 }} level={5}>
+                      <CodeOutlined /> Code vulnerabilities
+                    </Typography.Title>
+                    {branch?.findings
+                      ? getTotalPerType("code")
+                      : noVulnerabilities}
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card>
+                    <Typography.Title style={{ marginTop: 0 }} level={5}>
+                      <EyeInvisibleOutlined /> Hardcoded secrets
+                    </Typography.Title>
+                    {branch?.findings
+                      ? getTotalPerType("secret")
+                      : noVulnerabilities}
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card>
+                    <Typography.Title style={{ marginTop: 0 }} level={5}>
+                      <ClusterOutlined /> Infrastructure vulnerabilities
+                    </Typography.Title>
+                    {branch?.findings
+                      ? getTotalPerType("infrastructure")
+                      : noVulnerabilities}
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card>
+                    <Typography.Title style={{ marginTop: 0 }} level={5}>
+                      <AppstoreOutlined /> Image vulnerabilities
+                    </Typography.Title>
+                    {branch?.findings
+                      ? getTotalPerType("image")
+                      : noVulnerabilities}
+                  </Card>
+                </Col>
+                <Col span={8}>
+                  <Card>
+                    <Typography.Title style={{ marginTop: 0 }} level={5}>
+                      <AppstoreAddOutlined /> Package dependency
+                    </Typography.Title>
+                    {branch?.findings
+                      ? getTotalPerType("package")
+                      : noVulnerabilities}
+                  </Card>
+                </Col>
+              </Row>
 
-      {loading ? <Skeleton active/> : <>
-      <Row gutter={12}>
-        <Col span={8} style={{ marginBottom: 10 }}>
-          <Card>
-            <Typography.Title style={{ marginTop: 0 }} level={5}>
-              <CodeOutlined /> Code vulnerabilities
-            </Typography.Title>
-            {branch?.findings
-              ? getTotalPerType("code")
-              : noVulnerabilities}
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Typography.Title style={{ marginTop: 0 }} level={5}>
-              <EyeInvisibleOutlined /> Hardcoded secrets
-            </Typography.Title>
-            {branch?.findings
-              ? getTotalPerType("secret")
-              : noVulnerabilities}
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Typography.Title style={{ marginTop: 0 }} level={5}>
-              <ClusterOutlined /> Infrastructure vulnerabilities
-            </Typography.Title>
-            {branch?.findings
-              ? getTotalPerType("infrastructure")
-              : noVulnerabilities}
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Typography.Title style={{ marginTop: 0 }} level={5}>
-              <AppstoreOutlined /> Image vulnerabilities
-            </Typography.Title>
-            {branch?.findings
-              ? getTotalPerType("image")
-              : noVulnerabilities}
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Typography.Title style={{ marginTop: 0 }} level={5}>
-              <AppstoreAddOutlined /> Package dependency
-            </Typography.Title>
-            {branch?.findings
-              ? getTotalPerType("package")
-              : noVulnerabilities}
-          </Card>
-        </Col>
-      </Row>
-
-      <Row style={{ marginTop: 10 }}>
-        {branch?.scans ? <Stats scans={branch?.scans} /> : <></>}
-      </Row></>}
-
-    </Content>
-  </Col>
-  <Col span={6} style={{ paddingRight: 10 }}>
-    <Card style={{ paddingBottom: 0 }}>
-    { loading ? <Skeleton active/> : <>
-      <Typography.Title level={5} style={{ marginTop: 0 }}>
-        <SafetyOutlined /> Security Rating
-      </Typography.Title>
-      {branch?.findings ? (
-        getRating()
-      ) : (
-        <>
-          <Space>
-            <Avatar shape="square" style={{ backgroundColor: "green" }}>
-              A
-            </Avatar>
-            <Typography.Text style={{ margin: 0 }}>
-              No serious vulnerabilities found.
-            </Typography.Text>
-          </Space>
-        </>
-      )}</>}
-    </Card>
-  </Col>
-</Row>
+              <Row style={{ marginTop: 10 }}>
+                {branch?.scans ? <Stats scans={branch?.scans} /> : <></>}
+              </Row>
+            </>
+          )}
+        </Content>
+      </Col>
+      <Col span={6} style={{ paddingRight: 10 }}>
+        <Card style={{ paddingBottom: 0 }}>
+          {loading ? (
+            <Skeleton active />
+          ) : (
+            <>
+              <Typography.Title level={5} style={{ marginTop: 0 }}>
+                <SafetyOutlined /> Security Rating
+              </Typography.Title>
+              {branch?.findings ? (
+                getRating()
+              ) : (
+                <>
+                  <Space>
+                    <Avatar shape="square" style={{ backgroundColor: "green" }}>
+                      A
+                    </Avatar>
+                    <Typography.Text style={{ margin: 0 }}>
+                      No serious vulnerabilities found.
+                    </Typography.Text>
+                  </Space>
+                </>
+              )}
+            </>
+          )}
+        </Card>
+      </Col>
+    </Row>
+  );
 
   return (
     <div>
       <Typography.Title level={3}>
-        { !loading ? <>
-        <BranchesOutlined /> {repository?.name} -
-        <Dropdown
-          menu={{
-            items: repository?.branches?.map((branch) => {
-              return { 
-                key: branch._id, 
-                label: <Link to={`/repository/${repository._id}/branch/${branch._id}`}>{branch.ref}</Link>
-              }
-            }),
-          }}
-        >
-          <a onClick={(e) => e.preventDefault()}>
-            <Space>
-              <span style={{ paddingLeft: 10 }}>{branch?.ref || 'Protected branch'}</span>
-              <DownOutlined />
-            </Space>
-          </a>
-        </Dropdown></>:<Skeleton.Button size="small" style={{ width: 500 }} active/>}
+        {!loading ? (
+          <>
+            <BranchesOutlined /> {repository?.name} -
+            <Dropdown
+              menu={{
+                items: repository?.branches?.map((branch) => {
+                  return {
+                    key: branch._id,
+                    label: (
+                      <Link
+                        to={`/repository/${repository._id}/branch/${branch._id}`}
+                      >
+                        {branch.ref}
+                      </Link>
+                    ),
+                  };
+                }),
+              }}
+            >
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  <span style={{ paddingLeft: 10 }}>
+                    {branch?.ref || "Protected branch"}
+                  </span>
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          </>
+        ) : (
+          <Skeleton.Button size="small" style={{ width: 500 }} active />
+        )}
       </Typography.Title>
-      
-      <Tabs items={[
-            { 
-              key: 'Summary',
-              label: 'Summary',
-              children: summary
-            },
-            {
-              key: 'Vulnerabilities',
-              label: 'Vulnerabilities',
-              children: branch && repository ? <Findings branch={branch} repository={repository} />:<></>
-            }
-      ]}/>
 
-      
+      <Tabs
+        items={[
+          {
+            key: "Summary",
+            label: "Summary",
+            children: summary,
+          },
+          {
+            key: "Vulnerabilities",
+            label: "Vulnerabilities",
+            children:
+              branch && repository ? (
+                <Findings branch={branch} repository={repository} />
+              ) : (
+                <></>
+              ),
+          },
+        ]}
+      />
     </div>
   );
 }

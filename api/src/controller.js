@@ -159,7 +159,7 @@ function branch(repositoryId, branchId) {
           as: 'branches.findings'
         }
       },
-      { $unwind: "$branches.findings" },
+      { $unwind: { path: "$branches.findings", preserveNullAndEmptyArrays: true } },
       {
         $group: {
           _id: "$branches.findings.provider",
