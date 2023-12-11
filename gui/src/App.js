@@ -183,6 +183,7 @@ function App() {
         <Layout style={{ height: "100%", marginLeft: !collapsed ? 200 : 90 }}>
           <Content style={{ paddingRight: 10, paddingLeft: 10 }}>
             <Routes>
+              
               <Route
                 key={"repositories"}
                 path="/repositories"
@@ -194,13 +195,11 @@ function App() {
                 element={<Repository />}
               />
               <Route
-                path="/repository/branch"
-                element={<Branches />}
+                key={"repository"}
+                path="/repository/:repositoryId/branch/:branchId"
+                element={<Repository />}
               />
-              <Route
-                path="/repository/branch/:branchId"
-                element={<Findings />}
-              />
+             
 
               <Route path="/token" element={<Tokens />} />
               <Route path="/parser" element={<Parser />} />
@@ -210,7 +209,7 @@ function App() {
                 element={<AuthenticationSettings />}
               />
 
-              <Route path="*" element={<Navigate to="/repository" />} />
+              <Route path="*" element={<Navigate to="/repositories" />} />
             </Routes>
           </Content>
           <Footer style={{ textAlign: 'center', color: '#7f7b7b' }}>

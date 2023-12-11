@@ -44,7 +44,7 @@ function Stats(props) {
             }
   
           );
-    }, [])
+    }, [props.scans])
 
     return (
         <>

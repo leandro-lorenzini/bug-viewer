@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Breadcrumb,
   Col,
   Tabs,
   Descriptions,
@@ -29,9 +28,7 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import Stats from "./Stats";
-
+import { useParams, useSearchParams } from "react-router-dom";
 
 const { Content, Sider } = Layout;
 
@@ -70,9 +67,6 @@ function Findings(props) {
   const [attributes, setAttributes] = useState({});
   const [page, setPage] = useState(null);
   const [total, setTotal] = useState({});
-
-  const [scans, setScans] = useState();
-
   const [providers, setProviders] = useState([]);
   const [severities, setSeverities] = useState([]);
   const [ruleIds, setRuleIds] = useState([]);
@@ -84,38 +78,22 @@ function Findings(props) {
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
+    setLoading(true);
+    // Clear filters
+    setPage(null)
+    setTotal({});
+    setProviders([]);
+    setSeverities([]);
+    setRuleIds([])
+    setFiles([]);
+    setAttributes([]);
+
+    getResults(null, null, null, null, 1);
+  }, [props.branch._id]);
+
+  useEffect(() => {
+    setLoading(true);
     getResults(providers, severities, ruleIds, files, 1);
-
-   
-        setScans(
-          {
-            labels: props.branch.scans.map((data) => new Date(data.updatedAt).toDateString()), 
-            datasets: [
-              {
-                label: "Critical",
-                data: props.branch.scans.map((data) => data.critical),
-                backgroundColor: '#750000'
-              },
-              {
-                label: "High",
-                data: props.branch.scans.map((data) => data.high),
-                backgroundColor: '#F00000'
-              },
-              {
-                label: "Medium",
-                data: props.branch.scans.map((data) => data.medium),
-                backgroundColor: '#FFA500'
-              },
-              {
-                label: "Low",
-                data: props.branch.scans.map((data) => data.low),
-                backgroundColor: '#9ACEEB'
-              }
-            ]
-          }
-
-        );
-
   }, [providers, severities, ruleIds, files]);
 
 
@@ -283,7 +261,7 @@ function Findings(props) {
         padding: "1px",
       }}
     >
-      { loading ? <Skeleton active/> :
+      { loading ? <Skeleton style={{padding: 10}} active/> :
         !findings.length ? (
           <Empty description="There are no findings for this reference" image={Empty.PRESENTED_IMAGE_SIMPLE} />
           

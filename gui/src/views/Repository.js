@@ -1,11 +1,10 @@
 import {
   Avatar,
-  Breadcrumb,
   Card,
   Col,
   Dropdown,
   Row,
-  Select,
+  Skeleton,
   Space,
   Tabs,
   Tag,
@@ -31,11 +30,9 @@ import Findings from "./Findings";
 function Repository() {
   const [loading, setLoading] = useState(true);
   const [repository, setRepository] = useState(true);
-  const { repositoryId } = useParams();
+  const { repositoryId, branchId } = useParams();
   const [branch, setBranch] = useState();
   const [parsers, setParsers] = useState([]);
-  const [providers, setProviders] = useState([]);
-  const [rating, setRating] = useState(0);
 
   function getRepository() {
     axios
@@ -45,14 +42,16 @@ function Repository() {
       )
       .then((response) => {
         setRepository(response.data);
-        response.data?.branches?.forEach((branch) => {
-          if (branch.ref === response.data.head) {
-            getBranch(branch._id);
-          }
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+
+        if (!branchId) {
+          response.data?.branches?.forEach((branch) => {
+            if (branch.ref === response.data.head || 
+              branch.ref === `refs/heads/${response.data.head}`) {
+              getBranch(branch._id);
+            }
+          });
+        }
+
       });
   }
 
@@ -78,6 +77,9 @@ function Repository() {
       )
       .then((response) => {
         setBranch(response.data);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -196,16 +198,17 @@ function Repository() {
 
   useEffect(() => {
     getParsers();
-    if (1 < 2) {
-      getRepository();
-    } else {
-      getBranch();
+    getRepository();
+    if (branchId) {
+      getBranch(branchId);
     }
-  }, []);
+  }, [branchId]);
 
   const summary = <Row>
   <Col span={18} style={{ paddingRight: 10 }}>
     <Content style={{ padding: 20, backgroundColor: "white" }}>
+
+      {loading ? <Skeleton active/> : <>
       <Row gutter={12}>
         <Col span={8} style={{ marginBottom: 10 }}>
           <Card>
@@ -261,13 +264,14 @@ function Repository() {
 
       <Row style={{ marginTop: 10 }}>
         {branch?.scans ? <Stats scans={branch?.scans} /> : <></>}
-      </Row>
+      </Row></>}
+
     </Content>
   </Col>
   <Col span={6} style={{ paddingRight: 10 }}>
     <Card style={{ paddingBottom: 0 }}>
+    { loading ? <Skeleton active/> : <>
       <Typography.Title level={5} style={{ marginTop: 0 }}>
-        {" "}
         <SafetyOutlined /> Security Rating
       </Typography.Title>
       {branch?.findings ? (
@@ -283,7 +287,7 @@ function Repository() {
             </Typography.Text>
           </Space>
         </>
-      )}
+      )}</>}
     </Card>
   </Col>
 </Row>
@@ -291,21 +295,25 @@ function Repository() {
   return (
     <div>
       <Typography.Title level={3}>
+        { !loading ? <>
         <BranchesOutlined /> {repository?.name} -
         <Dropdown
           menu={{
             items: repository?.branches?.map((branch) => {
-              return { key: branch._id, label: branch.ref };
+              return { 
+                key: branch._id, 
+                label: <Link to={`/repository/${repository._id}/branch/${branch._id}`}>{branch.ref}</Link>
+              }
             }),
           }}
         >
           <a onClick={(e) => e.preventDefault()}>
             <Space>
-              <span style={{ paddingLeft: 10 }}>{branch?.ref}</span>
+              <span style={{ paddingLeft: 10 }}>{branch?.ref || 'Protected branch'}</span>
               <DownOutlined />
             </Space>
           </a>
-        </Dropdown>
+        </Dropdown></>:<Skeleton.Button size="small" style={{ width: 500 }} active/>}
       </Typography.Title>
       
       <Tabs items={[
