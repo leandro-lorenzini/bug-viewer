@@ -37,3 +37,9 @@ code {
 .severity.NEGLIGIBLE {
   color: grey;
 }
+
+.branchName > .ant-select-selector > .ant-select-selection-item {
+  color: #1677ff;
+  font-size: 24px;
+  font-weight: bold;
+}

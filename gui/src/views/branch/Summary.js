@@ -1,92 +1,20 @@
-import {
-  Avatar,
-  Card,
-  Col,
-  Dropdown,
-  Row,
-  Skeleton,
-  Space,
-  Tabs,
-  Tag,
-  Typography,
-} from "antd";
+import { Avatar, Card, Col, Row, Skeleton, Space, Tag, Typography } from "antd";
 import { Content } from "antd/es/layout/layout";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import {
   CodeOutlined,
   AppstoreOutlined,
   ClusterOutlined,
-  BranchesOutlined,
   EyeInvisibleOutlined,
   AppstoreAddOutlined,
   SafetyOutlined,
-  DownOutlined,
+  CalendarOutlined
 } from "@ant-design/icons";
 import Stats from "./Stats";
-import Findings from "./Findings";
 
-function Repository() {
-  const [loading, setLoading] = useState(true);
-  const [repository, setRepository] = useState(true);
-  const { repositoryId, branchId } = useParams();
-  const [branch, setBranch] = useState();
-  const [parsers, setParsers] = useState([]);
-
-  function getRepository() {
-    axios
-      .get(
-        `${process.env.REACT_APP_API_URL || "/api/"}repository/${repositoryId}`,
-        { withCredentials: true }
-      )
-      .then((response) => {
-        setRepository(response.data);
-
-        if (!branchId) {
-          response.data?.branches?.forEach((branch) => {
-            if (
-              branch.ref === response.data.head ||
-              branch.ref === `refs/heads/${response.data.head}`
-            ) {
-              getBranch(branch._id);
-            }
-          });
-        }
-      });
-  }
-
-  function getParsers() {
-    axios
-      .get(`${process.env.REACT_APP_API_URL || "/api/"}parser?page=1`, {
-        withCredentials: true,
-      })
-      .then((response) => {
-        setParsers(response.data.results.data);
-      });
-  }
-
-  function getBranch(branchId) {
-    axios
-      .get(
-        `${
-          process.env.REACT_APP_API_URL || "/api/"
-        }repository/${repositoryId}/branch/${branchId}`,
-        {
-          withCredentials: true,
-        }
-      )
-      .then((response) => {
-        setBranch(response.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
-
+export default function Summary(props) {
   function getTotalPerType(type) {
-    let results = branch.findings.filter((finding) =>
-      parsers
+    let results = props.branch.findings.filter((finding) =>
+      props.parsers
         .filter((parser) => parser.type === type)
         .map((parser) => parser.name)
         .includes(finding?.provider)
@@ -123,7 +51,7 @@ function Repository() {
   );
 
   function getRating() {
-    let result = branch.findings.reduce(
+    let result = props.branch.findings.reduce(
       (acc, current) => {
         acc.critical += current.critical; // E
         acc.high += current.high; //D
@@ -206,19 +134,11 @@ function Repository() {
     );
   }
 
-  useEffect(() => {
-    getParsers();
-    getRepository();
-    if (branchId) {
-      getBranch(branchId);
-    }
-  }, [branchId]);
-
-  const summary = (
+  return (
     <Row>
       <Col span={18} style={{ paddingRight: 10 }}>
         <Content style={{ padding: 20, backgroundColor: "white" }}>
-          {loading ? (
+          {props.loading ? (
             <Skeleton active />
           ) : (
             <>
@@ -228,7 +148,7 @@ function Repository() {
                     <Typography.Title style={{ marginTop: 0 }} level={5}>
                       <CodeOutlined /> Code vulnerabilities
                     </Typography.Title>
-                    {branch?.findings
+                    {props.branch?.findings
                       ? getTotalPerType("code")
                       : noVulnerabilities}
                   </Card>
@@ -238,7 +158,7 @@ function Repository() {
                     <Typography.Title style={{ marginTop: 0 }} level={5}>
                       <EyeInvisibleOutlined /> Hardcoded secrets
                     </Typography.Title>
-                    {branch?.findings
+                    {props.branch?.findings
                       ? getTotalPerType("secret")
                       : noVulnerabilities}
                   </Card>
@@ -248,7 +168,7 @@ function Repository() {
                     <Typography.Title style={{ marginTop: 0 }} level={5}>
                       <ClusterOutlined /> Infrastructure vulnerabilities
                     </Typography.Title>
-                    {branch?.findings
+                    {props.branch?.findings
                       ? getTotalPerType("infrastructure")
                       : noVulnerabilities}
                   </Card>
@@ -258,7 +178,7 @@ function Repository() {
                     <Typography.Title style={{ marginTop: 0 }} level={5}>
                       <AppstoreOutlined /> Image vulnerabilities
                     </Typography.Title>
-                    {branch?.findings
+                    {props.branch?.findings
                       ? getTotalPerType("image")
                       : noVulnerabilities}
                   </Card>
@@ -268,7 +188,7 @@ function Repository() {
                     <Typography.Title style={{ marginTop: 0 }} level={5}>
                       <AppstoreAddOutlined /> Package dependency
                     </Typography.Title>
-                    {branch?.findings
+                    {props.branch?.findings
                       ? getTotalPerType("package")
                       : noVulnerabilities}
                   </Card>
@@ -276,7 +196,11 @@ function Repository() {
               </Row>
 
               <Row style={{ marginTop: 10 }}>
-                {branch?.scans ? <Stats scans={branch?.scans} /> : <></>}
+                {props.branch?.scans ? (
+                  <Stats scans={props.branch?.scans} />
+                ) : (
+                  <></>
+                )}
               </Row>
             </>
           )}
@@ -284,14 +208,14 @@ function Repository() {
       </Col>
       <Col span={6} style={{ paddingRight: 10 }}>
         <Card style={{ paddingBottom: 0 }}>
-          {loading ? (
+          {props.loading ? (
             <Skeleton active />
           ) : (
             <>
               <Typography.Title level={5} style={{ marginTop: 0 }}>
                 <SafetyOutlined /> Security Rating
               </Typography.Title>
-              {branch?.findings ? (
+              {props.branch?.findings ? (
                 getRating()
               ) : (
                 <>
@@ -305,71 +229,18 @@ function Repository() {
                   </Space>
                 </>
               )}
+
+              <Typography.Title level={5}>
+                <CalendarOutlined /> Last scanned date
+              </Typography.Title>
+              <Typography.Text>
+                { new Date(props.branch.scans?.slice(-1)[0]?.createdAt).toUTCString()}
+              </Typography.Text>
+
             </>
           )}
         </Card>
       </Col>
     </Row>
   );
-
-  return (
-    <div>
-      <Typography.Title level={3}>
-        {!loading ? (
-          <>
-            <BranchesOutlined /> {repository?.name} -
-            <Dropdown
-              menu={{
-                items: repository?.branches?.map((branch) => {
-                  return {
-                    key: branch._id,
-                    label: (
-                      <Link
-                        to={`/repository/${repository._id}/branch/${branch._id}`}
-                      >
-                        {branch.ref}
-                      </Link>
-                    ),
-                  };
-                }),
-              }}
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                <Space>
-                  <span style={{ paddingLeft: 10 }}>
-                    {branch?.ref || "Protected branch"}
-                  </span>
-                  <DownOutlined />
-                </Space>
-              </a>
-            </Dropdown>
-          </>
-        ) : (
-          <Skeleton.Button size="small" style={{ width: 500 }} active />
-        )}
-      </Typography.Title>
-
-      <Tabs
-        items={[
-          {
-            key: "Summary",
-            label: "Summary",
-            children: summary,
-          },
-          {
-            key: "Vulnerabilities",
-            label: "Vulnerabilities",
-            children:
-              branch && repository ? (
-                <Findings branch={branch} repository={repository} />
-              ) : (
-                <></>
-              ),
-          },
-        ]}
-      />
-    </div>
-  );
 }
-
-export default Repository;

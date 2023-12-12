@@ -24,7 +24,8 @@ import {
   FunctionOutlined,
   ReadOutlined,
   ThunderboltOutlined,
-  ExceptionOutlined
+  ExceptionOutlined,
+  RetweetOutlined
 } from "@ant-design/icons";
 import axios from "axios";
 import queryString from "query-string";
@@ -209,8 +210,8 @@ function Findings(props) {
       items={[
         {
           key: "Providers",
-          label: "Providers",
-          icon: <SettingOutlined />,
+          label: "Scanners",
+          icon: <RetweetOutlined />,
           children: attributes.providers?.map((provider) => {
             return {
               key: provider,

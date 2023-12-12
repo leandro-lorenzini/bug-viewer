@@ -21,7 +21,7 @@ import {
 import axios from "axios";
 import queryString from "query-string";
 import { Content } from "antd/es/layout/layout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Repositories() {
   const [loading, setLoading] = useState(true);
@@ -34,8 +34,6 @@ function Repositories() {
   const [providers, setProviders] = useState([]);
 
   const [detailed, setDetailed] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     getResults(name, 1);

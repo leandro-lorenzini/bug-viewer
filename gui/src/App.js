@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout, ConfigProvider, Menu, notification } from "antd";
 import Repositories from "./views/Repositories";
-import Branches from "./views/Branches";
-import Findings from "./views/Findings";
 import { Route, Routes, Navigate, Link, useLocation } from "react-router-dom";
 import Signin from "./views/signin";
 import axios from "axios";
@@ -21,7 +19,7 @@ import AuthenticationSettings from "./views/AuthenticationSettings";
 import Users from "./views/users/Users";
 import ChangePassword from "./views/ChangePassword";
 import Parser from "./views/parsers/Parsers";
-import Repository from "./views/Repository";
+import Branch from "./views/branch/Branch";
 
 function App() {
   const { Sider, Footer } = Layout;
@@ -136,13 +134,13 @@ function App() {
                 key: "parser",
                 label: <Link to="/parser">Parsers</Link>,
                 icon: <RetweetOutlined />,
-                admin: true,
+                admin: 'true',
               },
               {
                 key: "user",
                 label: <Link to="/user">Users</Link>,
                 icon: <UsergroupAddOutlined />,
-                admin: true,
+                admin: 'true',
               },
               {
                 key: "settings",
@@ -156,7 +154,7 @@ function App() {
                     ),
                   },
                 ],
-                admin: true,
+                admin: 'true',
               },
               {
                 key: "account",
@@ -192,12 +190,12 @@ function App() {
               <Route
                 key={"repository"}
                 path="/repository/:repositoryId"
-                element={<Repository />}
+                element={<Branch />}
               />
               <Route
-                key={"repository"}
+                key={"branch"}
                 path="/repository/:repositoryId/branch/:branchId"
-                element={<Repository />}
+                element={<Branch />}
               />
              
 
