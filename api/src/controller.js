@@ -224,11 +224,12 @@ function upsert(repository, head, ref, findings, first) {
       let branchId = repository.branches.filter(b => b.ref === ref)?.[0]?._id;
       if (!branchId) {
         try {
-          branchId = await addBranch(repository._id, ref, scan);
+          branchId = await addBranch(repository._id, ref);
         } catch (error) {
           return reject(error);
         }
       }
+
       try {
         if (first) {
           await models.findings.deleteMany({ branchId });
@@ -237,11 +238,8 @@ function upsert(repository, head, ref, findings, first) {
           f.branchId = branchId;
           return f;
         }));
-        await models.repository.updateOne(
-          { _id: repository._id, 'branches._id': branchId }, 
-          { $addToSet: { 'branches.$.scans': scan } }
-        );
-        resolve({ repository, branchId: branchId });
+
+        resolve({ repository, branchId: branchId, scan: scan });
       } catch (error) {
         reject(error);
       }
@@ -250,6 +248,13 @@ function upsert(repository, head, ref, findings, first) {
       reject(error);
     })
   });
+}
+
+async function addScan(repositoryId, branchId, scan) {
+  return models.repository.updateOne(
+    { _id: repositoryId, 'branches._id': branchId }, 
+    { $addToSet: { 'branches.$.scans': scan } }
+  );
 }
 
 function findings(
@@ -387,9 +392,9 @@ function addRepository(name, head) {
   })
 }
 
-function addBranch(repositoryId, ref, scan) {
+function addBranch(repositoryId, ref) {
   return new Promise((resolve, reject) => {
-    let branch = { ref, _id: new ObjectId(), scans: [ scan ] };
+    let branch = { ref, _id: new ObjectId() };
     models.repository.updateOne(
       { _id: repositoryId },
       { $addToSet: { branches: branch } }
@@ -414,5 +419,6 @@ module.exports = {
   removeRepository,
   removeBranch,
   branchStats,
-  repository
+  repository,
+  addScan
 };

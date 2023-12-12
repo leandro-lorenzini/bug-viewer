@@ -72,8 +72,13 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
 
   // Read Json file
   let first = true;
-  let block = false;
   let upsertResult = null;
+  let scan = {
+    critical: 0,
+    high: 0,
+    medium: 0,
+    low: 0
+  }
 
   for (let file of req.files) {
     let parserName = file.originalname.match(/__(.*?)__/)[1];
@@ -105,6 +110,11 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
 
       try {
         upsertResult = await controller.upsert(value.name, value.head, value.ref.replace("refs/heads/", ""), findings || [], first);
+        // Update scan stats
+        scan.critical += upsertResult.scan.critical;
+        scan.high += upsertResult.scan.high;
+        scan.medium += upsertResult.scan.medium;
+        scan.low += upsertResult.scan.low;
       } catch (error) {
         console.log(error);
         return res.status(500).send("Error upserting repository and scan instance");
@@ -113,25 +123,23 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
       first = false;
       console.log('Inserted results to the database');
 
-      if (findings?.length) {
-        for (let finding of findings) {
-          if (["CRITICAL", "HIGH"].includes(finding.severity)) {
-            block = true;
-          }
-        }
-      }
-
     } else {
       return res.status(206).send('Could not find a parser for the uploaded file ' + file.originalname);
     }
   }
 
-  if (block) {
+  try {
+    controller.addScan(upsertResult.repository._id, upsertResult.branchId, scan);
+  } catch (error) {
+    console.log(error);
+  }
+
+  if (scan.critical || scan.high) {
     return res
       .status(207)
       .send(
         "Scan results have been saved, one or more serious bug has been found! " +
-        `Go to ${req.protocol}://${req.hostname}/repository/branch/${upsertResult.branchId}?ref=${value.ref.replace(/\//g, "%2F")}&repository=${upsertResult.repository._id}&repositoryName=${upsertResult.repository.name} for details.`
+        `Go to ${req.protocol}://${req.hostname}/repository/${upsertResult.repository._id}/branch/${upsertResult.branchId}`
       );
   }
   res.send("Scan results have been saved, no serious bug has been found :)");
