@@ -15,7 +15,7 @@ function branchStats(repositoryId, branchId) {
         let protectedBranches = repository.branches?.filter(
           b => {
             if (repository.head) {
-              return b.ref.includes === repository.head || b.ref.includes(`/${repository.head}`);
+              return b.ref === repository.head || b.ref.includes(`/${repository.head}`);
             } else {
               return ["main", "master"].includes(b.ref) || b.ref.includes('/main') || b.ref.includes('/master')
             }
