@@ -22,7 +22,7 @@ function branchStats(repositoryId, branchId) {
           }
         );
         if (protectedBranches?.length) {
-          branchId = protectedBranches[0]._id;
+          branchId = protectedBranches[protectedBranches.length-1]._id;
         }
       }
 
