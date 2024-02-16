@@ -93,9 +93,6 @@ Router.post("/", [upload.array("files"), verifyToken], async (req, res) => {
         return res.status(206).send(`${file.originalname} seems to be corrupt`);
       }
       var removePaths = normalizeToArray(value.removePaths);
-      
-      // Specific for docker scanning file name
-      removePaths.push(`${value.name}-latest`);
 
       var findings = parse(parsers[parserName], results || [], removePaths);
 
