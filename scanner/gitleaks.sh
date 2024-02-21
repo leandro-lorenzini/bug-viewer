@@ -15,4 +15,4 @@ cd ../../
 
 # Run scanner
 echo "Scanning git repository"
-gitleaks detect --verbose --baseline-path gitleaks-baseline.json -f json -r ./scanner/tmp/result/__gitleaks__.json
+gitleaks detect --verbose --baseline-path gitleaks-baseline.json -f json -r ./scanner/tmp/result/__gitleaks__.json --redact
