@@ -43,7 +43,3 @@ code {
   font-size: 24px;
   font-weight: bold;
 }
-
-.ant-layout-sider-children {
-  height: unset !important;
-}
