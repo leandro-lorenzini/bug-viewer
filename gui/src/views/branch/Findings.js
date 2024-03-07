@@ -157,6 +157,7 @@ function Findings(props) {
     <Menu
       disabled={loading}
       mode="inline"
+      theme="light"
       defaultOpenKeys={["Providers"]}
       style={{
         height: "100%",
